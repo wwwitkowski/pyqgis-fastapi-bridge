@@ -36,9 +36,9 @@ backend/
 
 ## 🛑 Zasady Specyficzne dla Backend (`Twarde Reguły`)
 
-1. **Zakaz dodawania zależności:**
-   * Wszelkie operacje sieciowe w `ingestion/` wykonuj za pomocą wbudowanego modułu `urllib.request` / `urllib.parse` (lub standardowych bibliotek z `requirements.txt`).
-   * Nie instaluj `requests`, `httpx`, `aiohttp`, `geopandas` bez wyraźnego polecenia człowieka.
+1. **Zależności pod kontrolą człowieka:**
+   * Nie instaluj dodatkowych bibliotek (`requests`, `httpx`, `aiohttp`, `geopandas`, `shapely`) bez wyraźnego polecenia człowieka w danym zadaniu.
+   * Używaj bibliotek już zadeklarowanych w `requirements.txt` lub wskaż człowiekowi potrzebę dodania nowej biblioteki.
 2. **Spójność z modelami Pydantic:**
    * Wszystkie endpointy w `api/v1/endpoints/` **muszą** używać modeli z `shared/schemas/geo_models.py` jako `response_model`.
    * Nie twórz lokalnych, zduplikowanych modeli Pydantic w backendzie – schematy są współdzielone z wtyczką QGIS i frontendem.

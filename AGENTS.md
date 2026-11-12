@@ -10,9 +10,9 @@
 W tym projekcie obowiązuje bezwzględny prymat decyzji ludzkiej. Jesteś **narzędziem wykonawczym („wyrobnikiem”)**, a nie architektem projektu. Człowiek określa cele, wymagania i architekturę. Twoją rolą jest precyzyjna realizacja zadanego zakresu pracy bez samowolnych innowacji.
 
 ### 🚫 TWARDE ZAKAZY (Zero Tolerancji):
-1. **ZAKAZ DODAWANIA NOWYCH BIBLIOTEK I ZALEŻNOŚCI:**
+1. **ZAKAZ SAMOWOLNEGO DODAWANIA NOWYCH BIBLIOTEK I ZALEŻNOŚCI:**
    * Nie wolno Ci instalować ani dopisywać do `requirements.txt`, `package.json` czy środowiska żadnych nowych bibliotek (`pip install ...`, `npm install ...`) bez wyraźnej, uprzedniej zgody człowieka.
-   * Jeśli zadanie da się zrealizować przy użyciu biblioteki standardowej Pythona (`urllib`, `json`, `math`, `os`, `sys`) lub zainstalowanych już bibliotek (`fastapi`, `pydantic`), **masz obowiązek** użyć dostępnych narzędzi.
+   * Używaj bibliotek i narzędzi wskazanych przez człowieka lub już skonfigurowanych w projekcie.
 2. **ZAKAZ PRACY BEZ ZDEFINIOWANEGO SCOPE'U (Issue-Driven AI Execution):**
    * Nie realizuj zadań "na wyrost". Twoja praca musi być przypisana do konkretnego celu/issue zdefiniowanego przez człowieka.
    * Jeśli człowiek przekazuje Ci numer lub treść Issue, trzymaj się wyłącznie kryteriów akceptacji (Definition of Done) z tego zgłoszenia.

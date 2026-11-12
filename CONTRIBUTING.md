@@ -81,7 +81,7 @@ Wszystkie commity w repozytorium **muszą** być formatowane zgodnie ze specyfik
 * Kod zgodny z **PEP 8** (czytelne nazwy, wcięcia 4 spacje, przejrzyste moduły).
 * Obowiązkowe **Type Hints** we wszystkich sygnaturach funkcji i metod.
 * Używamy modeli **Pydantic** do walidacji danych wejściowych i wyjściowych API.
-* **Zakaz instalowania nowych bibliotek** bez wyraźnego polecenia człowieka. Jeśli rozwiązanie da się osiągnąć standardową biblioteką Pythona (`urllib`, `json`, `math`), preferujemy bibliotekę standardową.
+* **Decyzja o zależnościach należy do człowieka:** Agent AI nie instaluje ani nie dodaje samowolnie nowych bibliotek. Wybór narzędzi (np. `httpx`, `requests`, `shapely`, `geopandas`) jest dyspozycją człowieka w ramach danego zadania.
 
 ### 2. PyQGIS (Wtyczka QGIS)
 * **Wielowątkowość:** Żadne operacje I/O (zapytania sieciowe, ciężkie obliczenia na geometrii) **nie mogą** być wykonywane synchronicznie w głównym wątku GUI. Obowiązkowo używamy wzorca `QgsTask` (`AsyncApiTask`).
