@@ -15,6 +15,25 @@ Szczegółowe wytyczne dla agentów sztucznej inteligencji znajdują się w plik
 
 ---
 
+## 🎯 Model Pracy: Issue-Driven Development (Zwinny Podział Obowiązków)
+
+Aby utrzymać przejrzysty podział obowiązków, uniknąć konfliktów w kodzie i nie tamować tempa prac niepotrzebną biurokracją:
+
+1. **Każde zadanie zaczynamy od GitHub Issue:**
+   * Zanim zaczniesz pisać kod lub zlecisz zadanie agentowi AI, utwórz krótkie zgłoszenie w zakładce **Issues**.
+   * Wybierz szablon **🚀 Nowe Zadanie (Task)** lub utwórz zwięzłe zgłoszenie.
+2. **Lekki, nietamujący format Issue:**
+   Wystarczą 3 konkretne punkty:
+   * **Cel (1-2 zdania):** Co robimy i po co (np. *"Dodać endpoint pobierania obrysu działki w formacie GeoJSON z ULDK"*).
+   * **Moduł i Odpowiedzialny:** Kto bierze zadanie (`backend`, `qgis_plugin`, `web`, `docs`).
+   * **Checklista ukończenia (Definition of Done):** 2-3 punkty weryfikujące gotowość (np. `- [ ] endpoint zwraca 200 OK`, `- [ ] test jednostkowy przechodzi`).
+3. **Płynny przepływ (Issue $\rightarrow$ Branch $\rightarrow$ Commit):**
+   * Tworzymy gałąź powiązaną z zadaniem: np. `feat/12-uldk-geojson` (gdzie 12 to numer issue).
+   * Commit zamykający: `feat(backend): add uldk geojson endpoint (closes #12)`.
+   * Dzięki temu cały zespół od razu widzi, kto nad czym pracuje, bez chaosu i dublowania pracy.
+
+---
+
 ## 🌿 Model Pracy z Gitem (GitHub Flow)
 
 Pracujemy w oparciu o prosty, zwinny model **GitHub Flow**:

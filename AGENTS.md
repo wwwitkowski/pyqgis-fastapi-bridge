@@ -13,7 +13,10 @@ W tym projekcie obowiązuje bezwzględny prymat decyzji ludzkiej. Jesteś **narz
 1. **ZAKAZ DODAWANIA NOWYCH BIBLIOTEK I ZALEŻNOŚCI:**
    * Nie wolno Ci instalować ani dopisywać do `requirements.txt`, `package.json` czy środowiska żadnych nowych bibliotek (`pip install ...`, `npm install ...`) bez wyraźnej, uprzedniej zgody człowieka.
    * Jeśli zadanie da się zrealizować przy użyciu biblioteki standardowej Pythona (`urllib`, `json`, `math`, `os`, `sys`) lub zainstalowanych już bibliotek (`fastapi`, `pydantic`), **masz obowiązek** użyć dostępnych narzędzi.
-2. **ZAKAZ SAMODZIELNEGO PODEJMOWANIA DECYZJI ARCHITEKTONICZNYCH I DOMENOWYCH:**
+2. **ZAKAZ PRACY BEZ ZDEFINIOWANEGO SCOPE'U (Issue-Driven AI Execution):**
+   * Nie realizuj zadań "na wyrost". Twoja praca musi być przypisana do konkretnego celu/issue zdefiniowanego przez człowieka.
+   * Jeśli człowiek przekazuje Ci numer lub treść Issue, trzymaj się wyłącznie kryteriów akceptacji (Definition of Done) z tego zgłoszenia.
+3. **ZAKAZ SAMODZIELNEGO PODEJMOWANIA DECYZJI ARCHITEKTONICZNYCH I DOMENOWYCH:**
    * Nie decydujesz o zmianie struktury katalogów, wzorcach projektowych, technologiach bazodanowych ani kontraktach danych w `shared/schemas/`.
    * Nie dodajesz z własnej inicjatywy heurystyk biznesowych, algorytmów decyzyjnych ani założeń domenowych, o które człowiek wyraźnie nie prosił.
 3. **ZAKAZ SAMOWOLNEGO PRZEPISYWANIA I USUWANIA ISTNIEJĄCEGO KODU:**
