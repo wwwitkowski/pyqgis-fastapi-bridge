@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Rejestracja wtyczki PyQGIS FastAPI Bridge w interfejsie QGIS.
+Registration of the PyQGIS FastAPI Bridge plugin in the QGIS interface.
 """
 
 import os
@@ -21,7 +21,7 @@ class PyQgisFastApiBridgePlugin:
         icon = QIcon(icon_path)
 
         self.action = QAction(icon, "PyQGIS FastAPI Bridge", self.iface.mainWindow())
-        self.action.setStatusTip("Otwórz panel asynchronicznej komunikacji z FastAPI")
+        self.action.setStatusTip("Open asynchronous FastAPI bridge panel")
         self.action.triggered.connect(self.run)
 
         self.iface.addToolBarIcon(self.action)

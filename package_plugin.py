@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Skrypt pakujący wtyczkę QGIS do archiwum .ZIP.
-Generuje gotowy pakiet instalacyjny, który można wgrać w QGIS przez:
-Wtyczki -> Zarządzaj wtyczkami -> Zainstaluj z pliku ZIP.
+Packaging script for the QGIS plugin into a deployable .ZIP archive.
+Generates an installation package that can be loaded in QGIS via:
+Plugins -> Manage and Install Plugins -> Install from ZIP.
 """
 
 import os
@@ -16,13 +16,13 @@ def package_qgis_plugin(output_zip=None):
     plugin_dir = os.path.join(plugin_parent, "pyqgis_fastapi_bridge")
     
     if not os.path.exists(plugin_dir):
-        print(f"[BŁĄD] Folder wtyczki nie istnieje: {plugin_dir}")
+        print(f"[ERROR] Plugin folder does not exist: {plugin_dir}")
         sys.exit(1)
         
     if not output_zip:
         output_zip = os.path.join(script_dir, "pyqgis_fastapi_bridge.zip")
 
-    print(f"📦 Pakowanie wtyczki QGIS do: {output_zip}...")
+    print(f"📦 Packaging QGIS plugin into: {output_zip}...")
 
     with zipfile.ZipFile(output_zip, "w", zipfile.ZIP_DEFLATED) as zipf:
         for root, dirs, files in os.walk(plugin_dir):
@@ -34,7 +34,7 @@ def package_qgis_plugin(output_zip=None):
                 rel_path = os.path.relpath(full_path, plugin_parent)
                 zipf.write(full_path, rel_path)
 
-    print(f"✅ Utworzono pakiet: {output_zip} ({os.path.getsize(output_zip)} bajtów)")
+    print(f"✅ Created package: {output_zip} ({os.path.getsize(output_zip)} bytes)")
     return output_zip
 
 if __name__ == "__main__":

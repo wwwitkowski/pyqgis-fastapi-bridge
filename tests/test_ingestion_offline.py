@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Testy jednostkowe konektorów otwartych danych w trybie mock/offline.
+Unit tests for open data ingestion connectors in mock/offline mode.
 """
 
 import sys
@@ -17,7 +17,7 @@ from backend.app.ingestion.imgw_connector import ImgwConnector
 class TestIngestionConnectorsOffline(unittest.TestCase):
     @patch("urllib.request.urlopen")
     def test_uldk_connector_success(self, mock_urlopen):
-        # Symulacja poprawnej odpowiedzi GUGiK ULDK: kod 0 + linia WKT
+        # Simulation of valid GUGiK ULDK response: status code 0 + WKT geometry line
         mock_response = MagicMock()
         mock_response.read.return_value = b"0\nPOLYGON((20.75 52.18, 20.76 52.18, 20.76 52.17, 20.75 52.17, 20.75 52.18));Mazowieckie;Warszawa\n"
         mock_urlopen.return_value.__enter__.return_value = mock_response
@@ -29,9 +29,9 @@ class TestIngestionConnectorsOffline(unittest.TestCase):
 
     @patch("urllib.request.urlopen")
     def test_uldk_connector_not_found(self, mock_urlopen):
-        # Symulacja błędu braku działki w ULDK (kod -1)
+        # Simulation of parcel not found error in ULDK (code -1)
         mock_response = MagicMock()
-        mock_response.read.return_value = b"-1\nNie znaleziono obiektu\n"
+        mock_response.read.return_value = b"-1\nObject not found\n"
         mock_urlopen.return_value.__enter__.return_value = mock_response
 
         res = UldkConnector.get_parcel_by_id("INVALID_ID")

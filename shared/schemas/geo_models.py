@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Uniwersalne schematy danych geoprzestrzennych (Pydantic).
-Wspólny kontrakt dla API FastAPI, wtyczki QGIS oraz frontendu webowego.
+Canonical geospatial data schemas (Pydantic).
+Shared contract for the FastAPI API, QGIS plugin, and web viewer.
 """
 
 from typing import Dict, Any, Optional, List

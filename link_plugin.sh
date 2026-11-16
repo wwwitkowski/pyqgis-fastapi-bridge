@@ -12,9 +12,9 @@ else
 fi
 
 echo "=========================================================="
-echo " Podlinkowanie wtyczki QGIS (${OSTYPE})"
-echo " Źródło: ${SOURCE_DIR}"
-echo " Cel:    ${TARGET_DIR}"
+echo " Linking QGIS Plugin (${OSTYPE})"
+echo " Source: ${SOURCE_DIR}"
+echo " Target: ${TARGET_DIR}"
 echo "=========================================================="
 
 mkdir -p "$(dirname "${TARGET_DIR}")"
@@ -26,5 +26,5 @@ fi
 ln -s "${SOURCE_DIR}" "${TARGET_DIR}"
 
 echo ""
-echo "[SUKCES] Wtyczka PyQGIS FastAPI Bridge zostala podlinkowana!"
-echo "Wlacz wtyczke w QGIS: Wtyczki -> Zarzadzaj wtyczkami."
+echo "[SUCCESS] PyQGIS FastAPI Bridge plugin linked successfully!"
+echo "Enable the plugin in QGIS: Plugins -> Manage and Install Plugins."

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Punkt wejścia aplikacji FastAPI.
-Czysty most komunikacyjny między FastAPI a środowiskiem QGIS.
+FastAPI application entry point.
+Clean communication bridge between FastAPI and the QGIS environment.
 """
 
 from fastapi import FastAPI
@@ -13,7 +13,7 @@ app = FastAPI(
     title=PROJECT_NAME,
     openapi_url=f"{API_V1_STR}/openapi.json",
     docs_url="/docs",
-    description="Asynchroniczny backend analityki przestrzennej dla wtyczki QGIS i podglądu Web"
+    description="Asynchronous spatial analytics backend for the QGIS plugin and web viewer."
 )
 
 app.add_middleware(

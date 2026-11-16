@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Przykładowy moduł obliczeń geometrycznych (starter).
+Sample geometric calculation module (starter boilerplate).
 """
 
 def calculate_bounding_box(coords: list):
-    """Zwraca [min_x, min_y, max_x, max_y] z listy par współrzędnych."""
+    """Returns [min_x, min_y, max_x, max_y] from a list of coordinate pairs."""
     if not coords:
         return [0.0, 0.0, 0.0, 0.0]
     xs = [pt[0] for pt in coords]

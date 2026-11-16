@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Endpointy do obsługi danych katastralnych (ULDK GUGiK).
+Endpoints for cadastral data ingestion (GUGiK ULDK).
 """
 
 from fastapi import APIRouter, HTTPException
@@ -10,7 +10,7 @@ router = APIRouter()
 
 @router.get("/uldk/{teryt_id}")
 async def get_parcel_from_uldk(teryt_id: str):
-    """Pobiera geometrię działki ewidencyjnej bezpośrednio z serwisu GUGiK ULDK."""
+    """Retrieves cadastral parcel geometry directly from the GUGiK ULDK service."""
     res = UldkConnector.get_parcel_by_id(teryt_id)
     if res.get("status") == "ERROR":
         raise HTTPException(status_code=502, detail=res.get("message"))
@@ -20,6 +20,6 @@ async def get_parcel_from_uldk(teryt_id: str):
 
 @router.get("/uldk/by-xy/{x}/{y}")
 async def get_parcel_by_coordinates(x: float, y: float, epsg: int = 2180):
-    """Pobiera identyfikator działki na podstawie współrzędnych punktu (X, Y)."""
+    """Retrieves parcel identifier and geometry based on point coordinates (X, Y)."""
     res = UldkConnector.get_parcel_by_xy(x, y, epsg)
     return res

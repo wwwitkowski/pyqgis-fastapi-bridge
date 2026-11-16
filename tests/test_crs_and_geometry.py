@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Testy jednostkowe układów współrzędnych i obliczeń geometrycznych.
+Unit tests for coordinate reference systems and geometric computations.
 """
 
 import sys
@@ -29,7 +29,7 @@ class TestCrsAndGeometry(unittest.TestCase):
         # min_lon < max_lon, min_lat < max_lat
         self.assertLess(BBOX_POLAND_4326[0], BBOX_POLAND_4326[2])
         self.assertLess(BBOX_POLAND_4326[1], BBOX_POLAND_4326[3])
-        # Sprawdzenie czy Warszawa (21.01, 52.23) mieści się w BBOX
+        # Verify that Warsaw (21.01, 52.23) is within the Poland BBOX
         lon_waw, lat_waw = 21.01, 52.23
         self.assertTrue(BBOX_POLAND_4326[0] <= lon_waw <= BBOX_POLAND_4326[2])
         self.assertTrue(BBOX_POLAND_4326[1] <= lat_waw <= BBOX_POLAND_4326[3])

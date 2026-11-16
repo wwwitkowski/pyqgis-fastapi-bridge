@@ -1,20 +1,20 @@
-name: 🐛 Zgłoszenie Błędu (Bug Report)
-description: Zgłoś błąd w kodzie, wtyczce QGIS lub API.
+name: 🐛 Bug Report
+description: Report a bug in the code, QGIS plugin, or FastAPI backend.
 title: "[BUG]: "
 labels: ["bug"]
 body:
   - type: textarea
     id: problem
     attributes:
-      label: 🛑 Opis błędu
-      description: Co nie działa i jaki jest oczekiwany rezultat?
+      label: 🛑 Problem Description
+      description: What is not working, and what is the expected result?
     validations:
       required: true
   - type: textarea
     id: reproduction
     attributes:
-      label: 🔄 Kroki do odtworzenia
-      description: Jak wywołać błąd?
+      label: 🔄 Steps to Reproduce
+      description: How can this issue be reproduced?
       value: |
         1. 
         2. 
@@ -24,5 +24,5 @@ body:
   - type: textarea
     id: logs
     attributes:
-      label: 📄 Logi / Komunikat błędu (Stack trace)
-      placeholder: "Wklej treść błędu z konsoli..."
+      label: 📄 Logs / Error Output (Stack trace)
+      placeholder: "Paste console or terminal error logs here..."
