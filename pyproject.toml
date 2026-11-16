@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "pyqgis-fastapi-bridge"
 version = "0.1.0"
 authors = [
-  { name = "Wiktor", email = "author@example.com" },
+  { name = "wwwitkowski", email = "wwitkowski.important@gmail.com" },
 ]
 description = "Asynchronous GIS boilerplate bridging QGIS (PyQGIS QgsTask), FastAPI, and MapLibre GL JS."
 readme = "README.md"
@@ -34,6 +34,11 @@ dev = [
     "build>=1.0.0",
     "wheel>=0.40.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/wwwitkowski/pyqgis-fastapi-bridge"
+Repository = "https://github.com/wwwitkowski/pyqgis-fastapi-bridge.git"
+Issues = "https://github.com/wwwitkowski/pyqgis-fastapi-bridge/issues"
 
 [tool.setuptools.packages.find]
 where = ["."]

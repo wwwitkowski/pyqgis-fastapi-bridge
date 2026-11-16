@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Wieloplatformowy skrypt wdrażający wtyczkę QGIS (PyQGIS FastAPI Bridge).
-Działa na Windows, macOS i Linux.
+Cross-platform deployment script for the QGIS plugin (PyQGIS FastAPI Bridge).
+Works on Windows, macOS, and Linux.
 """
 
 import os
@@ -33,21 +33,21 @@ def link_plugin():
     target_dir = os.path.join(get_qgis_plugin_dir(), PLUGIN_NAME)
 
     print("=" * 60)
-    print(f" Wdrażanie wtyczki QGIS: {PLUGIN_NAME}")
-    print(f" System operacyjny: {platform.system()} ({platform.release()})")
-    print(f" Źródło: {source_dir}")
-    print(f" Cel (QGIS): {target_dir}")
+    print(f" Deploying QGIS plugin: {PLUGIN_NAME}")
+    print(f" Operating system: {platform.system()} ({platform.release()})")
+    print(f" Source: {source_dir}")
+    print(f" Target (QGIS): {target_dir}")
     print("=" * 60)
 
     if not os.path.exists(source_dir):
-        print(f"[BŁĄD] Folder wtyczki nie istnieje: {source_dir}")
+        print(f"[ERROR] Plugin source directory does not exist: {source_dir}")
         sys.exit(1)
 
     plugins_parent = os.path.dirname(target_dir)
     os.makedirs(plugins_parent, exist_ok=True)
 
     if os.path.lexists(target_dir):
-        print(f"Usuwanie starego powiązania w: {target_dir}")
+        print(f"Removing existing link at: {target_dir}")
         if os.path.islink(target_dir):
             os.unlink(target_dir)
         elif os.path.isdir(target_dir):
@@ -70,10 +70,10 @@ def link_plugin():
         else:
             os.symlink(source_dir, target_dir, target_is_directory=True)
 
-        print("\n[SUKCES] Wtyczka została pomyślnie podlinkowana do QGIS!")
-        print("Uruchom QGIS i włącz wtyczkę: Wtyczki -> Zarządzaj wtyczkami -> PyQGIS FastAPI Bridge.")
+        print("\n[SUCCESS] Plugin successfully linked to QGIS!")
+        print("Launch QGIS and enable the plugin: Plugins -> Manage and Install Plugins -> PyQGIS FastAPI Bridge.")
     except Exception as e:
-        print(f"\n[BŁĄD] Nie udało się utworzyć powiązania: {e}")
+        print(f"\n[ERROR] Failed to link plugin: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":

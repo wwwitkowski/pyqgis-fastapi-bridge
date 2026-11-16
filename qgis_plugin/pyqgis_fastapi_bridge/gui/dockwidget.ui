@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>360</width>
-    <height>560</height>
+    <height>620</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,6 +22,29 @@
      <number>10</number>
     </property>
     <item>
+     <widget class="QLabel" name="lblApiUrl">
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>API Server URL (Tailscale / Local):</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="txtApiUrl">
+      <property name="text">
+       <string>http://127.0.0.1:8000</string>
+      </property>
+      <property name="placeholderText">
+       <string>http://100.x.y.z:8000 or http://magicdns:8000</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QLabel" name="lblTeryt">
       <property name="font">
        <font>
@@ -30,14 +53,14 @@
        </font>
       </property>
       <property name="text">
-       <string>Identyfikator (ID / TERYT):</string>
+       <string>Feature Identifier (ID / TERYT):</string>
       </property>
      </widget>
     </item>
     <item>
      <widget class="QLineEdit" name="txtTeryt">
       <property name="placeholderText">
-       <string>np. 141201_1.0001.123/4 lub PARCEL-001</string>
+       <string>e.g. 141201_1.0001.123/4 or PARCEL-001</string>
       </property>
      </widget>
     </item>
@@ -50,7 +73,7 @@
        </font>
       </property>
       <property name="text">
-       <string>Warstwa wektorowa:</string>
+       <string>Vector Layer:</string>
       </property>
      </widget>
     </item>
@@ -103,7 +126,7 @@
     <item>
      <widget class="QLabel" name="lblLog">
       <property name="text">
-       <string>Dziennik zdarzeń / Wyniki:</string>
+       <string>Event Log / Results:</string>
       </property>
      </widget>
     </item>
@@ -117,7 +140,7 @@
     <item>
      <widget class="QPushButton" name="btnClear">
       <property name="text">
-       <string>Wyczyść logi</string>
+       <string>Clear Logs</string>
       </property>
      </widget>
     </item>

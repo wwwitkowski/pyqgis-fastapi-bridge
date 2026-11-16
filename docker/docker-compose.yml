@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # 1. Baza danych przestrzennych (PostGIS)
+  # 1. Spatial Database (PostGIS)
   postgis:
     image: postgis/postgis:15-3.3
     container_name: spatial_postgis
@@ -14,7 +14,7 @@ services:
     volumes:
       - postgis_data:/var/lib/postgresql/data
 
-  # 2. Lokalne S3 na pliki rastrowe COG (MinIO)
+  # 2. Local S3 Object Storage for COG Rasters (MinIO)
   minio:
     image: minio/minio:latest
     container_name: spatial_minio
@@ -28,7 +28,7 @@ services:
     volumes:
       - minio_data:/data
 
-  # 3. Dynamiczny serwer kafelków rastrowych (TiTiler)
+  # 3. Dynamic Raster Tile Server (TiTiler)
   titiler:
     image: ghcr.io/developmentseed/titiler:latest
     container_name: spatial_titiler

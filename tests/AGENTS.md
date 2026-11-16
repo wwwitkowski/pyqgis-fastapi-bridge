@@ -1,48 +1,48 @@
-# 🤖 Instrukcje dla Agentów AI w Module Testów (`tests/`)
+# 🤖 Instructions for AI Agents: Testing Module (`tests/`)
 
-> **DLA KAŻDEGO AGENTA AI I ASYSTENTA KODU:**  
-> Przeczytaj ten plik przed tworzeniem, modyfikowaniem lub sugerowaniem jakichkolwiek testów w tym repozytorium.
-
----
-
-## 🛑 ZASADY PISANIA TESTÓW (HUMAN-FIRST TESTING)
-
-W tym projekcie obowiązuje **bezwzględna zasada Human-First Testing**. Człowiek decyduje o architekturze testów, celach weryfikacji i akceptowalnych kryteriach sukcesu. Agent AI jest wyłącznie wykonawcą poleceń i nie ma prawa do samowolnego rozbudowywania zestawu testów.
-
-### 🚫 CZEGO AGENTOWI AI NIE WOLNO (Zero Tolerancji):
-1. **ZAKAZ TESTOWANIA RZECZY TRYWIALNYCH I OCZYWISTYCH (Test Bloat):**
-   * Nie pisz testów sprawdzających, czy język Python działa poprawnie (np. czy `1 + 1 == 2`, czy `list.append()` dodaje element, czy wbudowany słownik przechowuje klucze).
-   * Nie pisz testów dla prostych getterów/setterów, pustych konstruktorów ani trywialnych przypisań atrybutów, chyba że zawierają jawną logikę walidacyjną.
-   * Nie generuj sztucznych testów tylko po to, aby "zwiększyć pokrycie kodu" (code coverage padding).
-2. **ZAKAZ SAMOWOLNEGO TWORZENIA NOWYCH PLIKÓW TESTOWYCH:**
-   * Agent AI **nie tworzy nowych plików testowych** bez wyraźnego polecenia człowieka definiującego cel i zakres testu.
-   * Jeśli zauważysz brakujący scenariusz, zapytaj człowieka: *"Czy chcesz, abym dodał test weryfikujący przypadek X?"*.
-3. **ZAKAZ TESTOWANIA BEZPOŚREDNICH ZALEŻNOŚCI ZEWNĘTRZNYCH (Zero Live Network w testach):**
-   * Żaden test jednostkowy nie może wykonywać rzeczywistych zapytań HTTP do zewnętrznych serwerów (ULDK, IMGW, Open-Meteo itp.).
-   * Wszelkie testy integracji z usługami zewnętrznymi muszą używać mocków (`unittest.mock`), atrap lub trybu offline (`test_ingestion_offline.py`).
-4. **ZAKAZ TWORZENIA TESTÓW FLAKY (Niestabilnych):**
-   * Zakaz używania `time.sleep()`, losowych wartości bez ziarna (`random.seed`) czy testów zależnych od strefy czasowej lub lokalizacji użytkownika.
+> **FOR EVERY AI AGENT AND CODING ASSISTANT:**  
+> Read this document before authoring, modifying, or proposing tests in this repository.
 
 ---
 
-## 🎯 CO AGENT AI MA TESTOWAĆ (Na Polecenie Człowieka):
+## 🛑 TESTING PRINCIPLES (HUMAN-FIRST TESTING)
 
-1. **Kontrakty Danych i Schematy Pydantic (`test_schemas.py`):**
-   * Czy nieprawidłowe współrzędne geograficzne lub błędne typy danych są poprawnie odrzucane przez walidację (`ValidationError`).
-   * Czy serializacja i deserializacja do formatu GeoJSON przebiega zgodnie ze specyfikacją RFC 7946.
-2. **Transformacje Współrzędnych i Obliczenia Metryczne (`test_crs_and_geometry.py`):**
-   * Czy przeliczniki pomiędzy układami EPSG:2180 a EPSG:4326/EPSG:3857 zwracają wartości w oczekiwanych tolerancjach.
-   * Czy funkcja obliczania powierzchni w $m^2$ oraz hektarach poprawnie obsługuje wielokąty i zgłasza błąd przy zdegenerowanej geometrii.
-3. **Obsługa Błędów i Odporność (Error Handling & Fallback):**
-   * Jak kod zachowuje się przy pustej odpowiedzi z API, kodzie HTTP 500, przekroczeniu czasu oczekiwania (timeout) lub uszkodzonym formacie JSON/WKT.
-4. **Struktura Wtyczki QGIS i Izolacja Środowiskowa (`test_qgis_plugin.py`):**
-   * Czy wtyczka posiada poprawny plik `metadata.txt`, zgodną strukturę importów i nie wywołuje wyjątków przy braku środowiska GUI QGIS.
+This project strictly adheres to **Human-First Testing**. Humans determine test architecture, verification goals, and acceptance criteria. AI agents are executors and have no authority to arbitrarily expand test suites.
+
+### 🚫 STRICT PROHIBITIONS (Zero Tolerance):
+1. **NO TRIVIAL OR SUPERFLUOUS TESTS (Zero Test Bloat):**
+   * Do not write tests verifying Python language semantics (e.g. testing whether `1 + 1 == 2`, whether `list.append()` appends, or whether dictionary keys persist).
+   * Do not test plain getters/setters, empty constructors, or trivial assignments lacking validation logic.
+   * Do not generate vanity tests solely to artificially increase code coverage.
+2. **NO UNAUTHORIZED TEST SUITES OR FILES:**
+   * AI agents **must not create new test files** without explicit human direction defining the scope and purpose.
+   * If you spot an unhandled edge case, ask the human user: *"Would you like me to add a test verifying scenario X?"*.
+3. **NO DIRECT EXTERNAL NETWORK CALLS (Zero Live Network in Tests):**
+   * No unit test may dispatch real HTTP requests to external servers (ULDK, IMGW, Open-Meteo, etc.).
+   * All external integrations must use mocks (`unittest.mock`), stubs, or offline fallback validation (`test_ingestion_offline.py`).
+4. **NO FLAKY OR UNSTABLE TESTS:**
+   * No `time.sleep()`, unseeded pseudorandom values, or assumptions dependent on local timezone or location.
 
 ---
 
-## 🛠️ STANDARDY TECHNICZNE TESTÓW
+## 🎯 WHAT AI AGENTS SHOULD TEST (When Instructed):
 
-* **Framework:** Standardowy moduł biblioteki standardowej `unittest`.
-* **Zero nowych zależności:** Testy muszą być uruchamialne w czystym środowisku Pythona bez konieczności instalowania dodatkowych pakietów (np. `pytest`, chyba że człowiek o to wyraźnie poprosi).
-* **Izolacja ścieżek:** Każdy plik testowy musi dynamicznie ustawiać ścieżkę do projektu za pomocą `sys.path.insert(0, ...)`.
-* **Warunkowe pomijanie:** W przypadku modułów opcjonalnych (np. `fastapi`), testy muszą używać `@unittest.skipIf(not MODUL_DOSTEPNY, "powód pominięcia")`, aby zestaw testów przechodził w każdym środowisku.
+1. **Data Contracts & Pydantic Schemas (`test_schemas.py`):**
+   * Ensure malformed coordinates and invalid types trigger appropriate validation exceptions (`ValidationError`).
+   * Verify GeoJSON serialization and deserialization conform to RFC 7946 specifications.
+2. **Coordinate Transformations & Metric Calculations (`test_crs_and_geometry.py`):**
+   * Validate that conversions between EPSG:2180 and EPSG:4326/EPSG:3857 remain within precision tolerances.
+   * Verify polygon area calculations in $m^2$ and hectares handle boundaries correctly and reject degenerated geometries.
+3. **Error Handling & Graceful Degradation (Fallback):**
+   * Verify behavior under empty API payloads, HTTP 500 errors, timeouts, and malformed JSON or WKT.
+4. **QGIS Plugin Structure & Environment Isolation (`test_qgis_plugin.py`):**
+   * Verify `metadata.txt` validity, import cleanliness, and absence of GUI exceptions in headless test environments.
+
+---
+
+## 🛠️ TECHNICAL TESTING STANDARDS
+
+* **Framework:** Standard Python standard library `unittest`.
+* **Zero new dependencies:** Tests must run in a vanilla Python environment without requiring mandatory third-party test runners (e.g. `pytest`, unless requested).
+* **Path Isolation:** Every test file dynamically resolves repository root via `sys.path.insert(0, ...)`.
+* **Conditional Skipping:** For optional dependencies (such as `fastapi` or `pydantic`), tests must use `@unittest.skipIf(not MODULE_AVAILABLE, "Reason for skip")` to ensure test execution passes in any environment.
