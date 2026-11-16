@@ -29,6 +29,20 @@ This project operates under the absolute primacy of human decision-making. You a
 
 ---
 
+## 🌍 Spatial Standards & CRS Rules (Null Island Prevention)
+
+1. **Standard Project & Analytical CRS: `EPSG:2180 (PUWG 1992 / ETRF2000-PL)`**
+   * Official Polish national projected metric coordinate system.
+   * All Polish public registries (GUGiK ULDK, Geoportal, cadastral parcels) operate under EPSG:2180.
+   * All distance, perimeter, and surface area calculations ($m^2$, hectares) must be performed in EPSG:2180.
+2. **Standard Exchange & GeoJSON CRS: `EPSG:4326 (WGS 84 Lon/Lat)`**
+   * Standard GeoJSON files and Pydantic API response coordinates are formatted as `[longitude, latitude]`.
+3. **Null Island (São Tomé / Gulf of Guinea) Prevention:**
+   * Never create or export QGIS project files with an empty/unassigned project CRS (`projectCrs`). Without an explicit CRS, degrees (`20.75°E, 52.18°N`) are interpreted as metric meters (`20m, 52m`), landing features off the coast of West Africa (Null Island).
+   * Always enforce relative project paths (`<projectflags><flags><relativePaths>1</relativePaths></flags></projectflags>`) in `.qgs`/`.qgz` files so projects resolve data files relative to the project directory across different developer workstations.
+
+---
+
 ## 🗺️ Module Map & Subordinate AGENTS.md Files
 
 This repository follows a modular layout. Each submodule maintains its own specialized `AGENTS.md` specifying rules for that component:

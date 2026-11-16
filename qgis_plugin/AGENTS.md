@@ -43,5 +43,12 @@ qgis_plugin/
 3. **Relative Paths and Symbolic Linking:**
    * All file references (e.g., `dockwidget.ui`, `icon.png`) must be constructed relatively using `os.path.join(os.path.dirname(__file__), ...)`.
    * The plugin is linked to the active QGIS profile via directory junction / symlink (`deploy.py`). Do not hardcode paths to `%APPDATA%` or drive letters.
-4. **Geometry Validity Checks:**
+4. **Coordinate Reference System (CRS) Standards & Null Island Prevention:**
+   * The project standard display and analytical CRS is **`EPSG:2180 (PUWG 1992 / ETRF2000-PL)`** — all Polish cadastre (ULDK), GUGiK, and field metrics are in meters/hectares under this system.
+   * GeoJSON standard storage is strictly **`EPSG:4326 (WGS84 Lon/Lat)`**.
+   * Web tile backends (e.g., OpenStreetMap) operate in **`EPSG:3857 (Web Mercator)`**.
+   * When creating, exporting, or modifying QGIS projects or vector layers:
+     * Never leave project CRS unassigned (`None`), as degrees will be interpreted as meters, throwing coordinates into Null Island (Gulf of Guinea / São Tomé).
+     * Always enforce `<projectflags><flags><relativePaths>1</relativePaths></flags></projectflags>` in `.qgs`/`.qgz` project files so datasets load seamlessly across teammate machines.
+5. **Geometry Validity Checks:**
    * Always verify that layers are valid (`layer.isValid()`) and geometries are non-empty (`not geom.isEmpty()`) before calculating centroids or performing coordinate transforms.
