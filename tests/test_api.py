@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Testy jednostkowe API FastAPI i logiki endpointów.
+Unit tests for FastAPI endpoints and analytical logic.
 """
 
 import sys
@@ -20,7 +20,7 @@ try:
 except ImportError:
     FASTAPI_INSTALLED = False
 
-@unittest.skipIf(not FASTAPI_INSTALLED, "Pomiń testy FastAPI - moduł nie jest zainstalowany w środowisku")
+@unittest.skipIf(not FASTAPI_INSTALLED, "Skip FastAPI tests - module not installed in environment")
 class TestApiEndpoints(unittest.TestCase):
     def test_app_initialization(self):
         self.assertIsNotNone(app)

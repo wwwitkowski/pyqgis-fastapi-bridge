@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 """
-Konektor do ULDK GUGiK (Usługa Lokalizacji Działek Katastralnych).
-Pobiera geometrię działek ewidencyjnych w Polsce (WKT w EPSG:2180).
+Connector for GUGiK ULDK (Cadastral Parcel Locator Service).
+Retrieves geometry of cadastral parcels in Poland (WKT in EPSG:2180).
 """
 
 import urllib.request
 import urllib.parse
 
 class UldkConnector:
-    """Klient publicznego API GUGiK ULDK."""
+    """Client for the public GUGiK ULDK API."""
 
     BASE_URL = "https://uldk.gugik.gov.pl/"
 
     @classmethod
     def get_parcel_by_id(cls, teryt_id: str):
-        """Pobiera geometrię działki po identyfikatorze TERYT."""
+        """Retrieves parcel geometry by TERYT cadastral identifier."""
         params = {
             "request": "GetParcelById",
             "id": teryt_id,
@@ -37,13 +37,13 @@ class UldkConnector:
                         "wkt_2180": wkt,
                         "raw_info": lines[1:]
                     }
-                return {"status": "NOT_FOUND", "message": f"Działka {teryt_id} nie została znaleziona w ULDK."}
+                return {"status": "NOT_FOUND", "message": f"Parcel {teryt_id} was not found in ULDK."}
         except Exception as e:
             return {"status": "ERROR", "message": str(e)}
 
     @classmethod
     def get_parcel_by_xy(cls, x: float, y: float, epsg: int = 2180):
-        """Pobiera identyfikator działki i geometrię na podstawie współrzędnych punktu."""
+        """Retrieves parcel identifier and geometry based on point coordinates."""
         params = {
             "request": "GetParcelByXY",
             "xy": f"{x},{y},{epsg}",

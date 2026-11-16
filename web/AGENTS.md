@@ -1,33 +1,33 @@
-# 🤖 Instrukcje dla Agenta AI: Moduł Web (`web/`)
+# 🤖 Instructions for AI Agents: Web Module (`web/`)
 
-> Przed edycją plików w tym folderze zapoznaj się z nadrzędnym plikiem [`/AGENTS.md`](../AGENTS.md) oraz [`/CONTRIBUTING.md`](../CONTRIBUTING.md).
-
----
-
-## 🎯 Zakres i Rola Modułu (`Scope`)
-Folder `web/` odpowiada za lekki podgląd mapowy w przeglądarce internetowej. Służy do:
-1. Wizualizacji danych przestrzennych (warstw wektorowych GeoJSON i podkładów kafelkowych) za pomocą biblioteki **MapLibre GL JS**.
-2. Demonstracji odpytywania endpointów backendu FastAPI (`/api/v1/analysis/...`) bezpośrednio z przeglądarki.
-3. Sprawdzenia poprawności konfiguracji nagłówków CORS po stronie serwera.
+> Before editing files in this directory, review the root [`/AGENTS.md`](../AGENTS.md) and [`/CONTRIBUTING.md`](../CONTRIBUTING.md).
 
 ---
 
-## 📂 Struktura Katalogu
+## 🎯 Scope and Role of the Module
+The `web/` directory provides a lightweight in-browser map viewer used to:
+1. Visualize spatial data (GeoJSON vector layers and raster base maps) using **MapLibre GL JS**.
+2. Demonstrate querying FastAPI backend endpoints (`/api/v1/analysis/...`) directly from a web browser.
+3. Validate server-side CORS header configuration.
+
+---
+
+## 📂 Directory Structure
 ```text
 web/
-└── index.html              # Jednoplikowy podgląd mapowy (HTML5 + CSS + vanilla JS + MapLibre GL JS)
+└── index.html              # Standalone map viewer (HTML5 + CSS + vanilla JS + MapLibre GL JS)
 ```
 
 ---
 
-## 🛑 Zasady Specyficzne dla Web (`Twarde Reguły`)
+## 🛑 Web-Specific Rules (`Hard Constraints`)
 
-1. **Zakaz wprowadzania ciężkich frameworków:**
-   * Nie instaluj ani nie konfiguruj projektów Next.js, React, Vue, Angular, Vite ani Webpack bez wyraźnej dyspozycji człowieka.
-   * Moduł ma pozostać ultralekki – otwierany bezpośrednio z dysku jako plik `index.html` lub serwowany jako plik statyczny.
-2. **Standardy wizualizacji mapowej:**
-   * Używaj otwartoźródłowej biblioteki **MapLibre GL JS** (nie Mapbox GL, który wymaga płatnych kluczy tokenowych).
-   * Jako domyślny podkład kafelkowy stosuj darmowe kafelki OpenStreetMap (`https://tile.openstreetmap.org/{z}/{x}/{y}.png`).
-3. **Komunikacja z API:**
-   * Wywołania sieciowe realizuj za pomocą standardowej funkcji przeglądarki `fetch()`.
-   * Zawsze obsługuj błędy sieciowe (`try-catch`), informując użytkownika w czytelny sposób o statusie połączenia z serwerem lokalnym.
+1. **No Heavy Frontend Frameworks:**
+   * Do not install or configure Next.js, React, Vue, Angular, Vite, or Webpack projects without explicit human direction.
+   * This module must remain ultralightweight — openable directly from disk as `index.html` or served as static files.
+2. **Map Visualization Standards:**
+   * Use the open-source **MapLibre GL JS** library (not Mapbox GL, which requires paid token keys).
+   * Use free OpenStreetMap tiles as default basemap (`https://tile.openstreetmap.org/{z}/{x}/{y}.png`).
+3. **API Communication:**
+   * Execute network requests via the standard browser `fetch()` API.
+   * Always handle network errors (`try-catch`), providing users with clear status messages regarding local backend connectivity.

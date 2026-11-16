@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Uniwersalny endpoint analityki geoprzestrzennej.
-Zwraca kontrakt 'GeoAnalysisResponse' konsumowany przez wtyczkę QGIS oraz frontend webowy.
+General spatial analytics endpoint.
+Returns the 'GeoAnalysisResponse' contract consumed by the QGIS plugin and web viewer.
 """
 
 from fastapi import APIRouter
@@ -16,7 +16,7 @@ async def analyze_feature(
     lat: float = 52.18,
     lon: float = 20.76
 ):
-    """Przykładowy endpoint wykonujący prostą analizę przestrzenną."""
+    """Sample endpoint performing basic spatial analysis."""
     metrics = {
         "calculated_area_ha": 12.4,
         "perimeter_m": 1420.0,
@@ -24,9 +24,9 @@ async def analyze_feature(
     }
 
     details = [
-        SpatialMetric(name="Area", value=12.4, unit="ha", description="Powierzchnia obiektu"),
-        SpatialMetric(name="Centroid Lat", value=lat, unit="deg", description="Szerokość geograficzna środka"),
-        SpatialMetric(name="Centroid Lon", value=lon, unit="deg", description="Długość geograficzna środka")
+        SpatialMetric(name="Area", value=12.4, unit="ha", description="Feature surface area"),
+        SpatialMetric(name="Centroid Lat", value=lat, unit="deg", description="Centroid latitude"),
+        SpatialMetric(name="Centroid Lon", value=lon, unit="deg", description="Centroid longitude")
     ]
 
     return GeoAnalysisResponse(

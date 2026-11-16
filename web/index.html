@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,10 +8,13 @@
   <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
   <style>
     body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; height: 100vh; }
-    #sidebar { width: 340px; background: #ffffff; border-right: 1px solid #e2e8f0; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; gap: 15px; }
+    #sidebar { width: 340px; background: #ffffff; border-right: 1px solid #e2e8f0; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px; }
     #map { flex: 1; height: 100%; }
     h1 { font-size: 16px; margin: 0; color: #1e293b; }
     p { font-size: 13px; margin: 0; color: #64748b; line-height: 1.4; }
+    label { font-size: 11px; font-weight: 600; color: #475569; }
+    input[type="text"] { padding: 8px 10px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box; width: 100%; outline: none; }
+    input[type="text"]:focus { border-color: #0284c7; }
     button { background: #0284c7; color: white; border: none; padding: 10px 14px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13px; }
     button:hover { background: #0369a1; }
     pre { background: #0f172a; color: #38bdf8; padding: 10px; border-radius: 4px; font-size: 11px; overflow-x: auto; flex: 1; margin: 0; }
@@ -20,17 +23,27 @@
 <body>
   <div id="sidebar">
     <h1>🌐 PyQGIS FastAPI Bridge</h1>
-    <p>Generyczny podgląd mapowy łączący MapLibre GL JS z backendem analitycznym.</p>
+    <p>Generic map viewer bridging MapLibre GL JS with the spatial analytical backend.</p>
     
+    <div>
+      <label for="apiUrl">Backend API URL (Tailscale / Local):</label>
+      <input type="text" id="apiUrl" value="http://127.0.0.1:8000" placeholder="e.g. http://100.x.y.z:8000 or http://magicdns:8000" />
+    </div>
+
     <button onclick="fetchGeoJson()">📥 Fetch GeoJSON from API</button>
     <div id="status" style="font-size: 12px; color: #64748b;"></div>
     
-    <pre id="output">// Odpowiedź z serwera pojawi się tutaj</pre>
+    <pre id="output">// Server response will appear here</pre>
   </div>
 
   <div id="map"></div>
 
   <script>
+    // Automatically set default backend host if loaded over network
+    if (window.location.hostname && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      document.getElementById('apiUrl').value = `${window.location.protocol}//${window.location.hostname}:8000`;
+    }
+
     const map = new maplibregl.Map({
       container: 'map',
       style: {
@@ -38,12 +51,22 @@
         sources: {
           osm: {
             type: 'raster',
-            tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+            tiles: [
+              'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
+            ],
             tileSize: 256,
-            attribution: '&copy; OpenStreetMap contributors'
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           }
         },
-        layers: [{ id: 'osm', type: 'raster', source: 'osm' }]
+        layers: [
+          {
+            id: 'osm-layer',
+            type: 'raster',
+            source: 'osm',
+            minzoom: 0,
+            maxzoom: 19
+          }
+        ]
       },
       center: [20.76, 52.175],
       zoom: 13
@@ -52,15 +75,18 @@
     async function fetchGeoJson() {
       const status = document.getElementById('status');
       const out = document.getElementById('output');
-      status.innerText = 'Odpytywanie API...';
+      const rawUrl = document.getElementById('apiUrl').value.trim().replace(/\/+$/, '') || 'http://127.0.0.1:8000';
+      const targetEndpoint = rawUrl.endsWith('/api/v1') ? `${rawUrl}/analysis/PARCEL-001` : `${rawUrl}/api/v1/analysis/PARCEL-001`;
 
-      // Przykładowy poligon w GeoJSON (np. pobrany z API)
+      status.innerText = `Querying ${targetEndpoint}...`;
+
+      // Sample polygon in GeoJSON format (fallback representation)
       const sampleGeoJson = {
         "type": "FeatureCollection",
         "features": [
           {
             "type": "Feature",
-            "properties": { "id": "PARCEL-001", "name": "Przykładowy poligon" },
+            "properties": { "id": "PARCEL-001", "name": "Sample polygon" },
             "geometry": {
               "type": "Polygon",
               "coordinates": [
@@ -78,16 +104,17 @@
       };
 
       try {
-        const res = await fetch('http://127.0.0.1:8000/api/v1/analysis/PARCEL-001');
+        const res = await fetch(targetEndpoint);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         out.innerText = JSON.stringify(data, null, 2);
-        status.innerHTML = '<span style="color: green;">✓ Dane pobrane z API</span>';
+        status.innerHTML = `<span style="color: green;">✓ Data fetched from ${targetEndpoint}</span>`;
       } catch (e) {
         out.innerText = JSON.stringify(sampleGeoJson, null, 2);
-        status.innerHTML = '<span style="color: #64748b;">(Tryb offline: załadowano lokalny GeoJSON)</span>';
+        status.innerHTML = `<span style="color: #64748b;">(Offline fallback: could not reach ${targetEndpoint}. Loaded local GeoJSON)</span>`;
       }
 
-      // Rysowanie niebieskiego obrysu na mapie
+      // Render polygon overlay on map
       if (map.getSource('sample-data')) {
         map.getSource('sample-data').setData(sampleGeoJson);
       } else {

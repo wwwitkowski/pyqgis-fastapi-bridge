@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Testy komponentów wtyczki QGIS niewymagające środowiska QGIS.
+Unit tests for QGIS plugin components that do not require a live QGIS GUI environment.
 """
 
 import sys
@@ -23,20 +23,20 @@ class TestQgisPluginInfrastructure(unittest.TestCase):
 
     def test_metadata_file_validity(self):
         metadata_path = os.path.join(self.plugin_dir, "metadata.txt")
-        self.assertTrue(os.path.exists(metadata_path), "metadata.txt musi istnieć w katalogu wtyczki")
+        self.assertTrue(os.path.exists(metadata_path), "metadata.txt must exist in plugin directory")
 
         config = configparser.ConfigParser()
         config.read(metadata_path, encoding="utf-8")
-        self.assertIn("general", config.sections(), "metadata.txt musi zawierać sekcję [general]")
+        self.assertIn("general", config.sections(), "metadata.txt must contain a [general] section")
 
         general = config["general"]
         required_keys = ["name", "qgisminimumversion", "description", "version", "author", "email", "about"]
         for key in required_keys:
-            self.assertIn(key, general, f"Brak wymaganego klucza w metadata.txt: {key}")
-            self.assertTrue(len(general[key]) > 0, f"Klucz {key} nie może być pusty")
+            self.assertIn(key, general, f"Missing required key in metadata.txt: {key}")
+            self.assertTrue(len(general[key]) > 0, f"Key {key} must not be empty")
 
     def test_api_client_fallback_mode(self):
-        # Test wywołania klienta z celowo nieaktywnym portem, sprawdzający tryb awaryjny (offline fallback)
+        # Test client invocation with deliberately inactive port to verify graceful offline fallback
         res = BackendApiClient.analyze_parcel(parcel_id="MOCK-001", lat=52.0, lon=21.0)
         self.assertIsInstance(res, dict)
         self.assertIn("status", res)

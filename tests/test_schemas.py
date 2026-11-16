@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Testy jednostkowe schematów Pydantic (shared/schemas/geo_models.py).
+Unit tests for shared Pydantic schemas (shared/schemas/geo_models.py).
 """
 
 import sys
@@ -23,7 +23,7 @@ except ImportError:
     PYDANTIC_AVAILABLE = False
 
 
-@unittest.skipIf(not PYDANTIC_AVAILABLE, "Pomiń testy schematów - Pydantic nie jest zainstalowany w środowisku")
+@unittest.skipIf(not PYDANTIC_AVAILABLE, "Skip schema tests - Pydantic is not installed in the environment")
 class TestGeoSchemas(unittest.TestCase):
     def test_geo_feature_request_defaults(self):
         req = GeoFeatureRequest(feature_id="PARCEL-001")
@@ -38,7 +38,7 @@ class TestGeoSchemas(unittest.TestCase):
             name="Area",
             value=14.5,
             unit="ha",
-            description="Powierzchnia w hektarach"
+            description="Surface area in hectares"
         )
         data = metric.model_dump() if hasattr(metric, "model_dump") else metric.dict()
         self.assertEqual(data["name"], "Area")
@@ -58,13 +58,13 @@ class TestGeoSchemas(unittest.TestCase):
 
     def test_meteo_observation(self):
         obs = MeteoObservation(
-            station="Warszawa-Okęcie",
+            station="Warszawa-Okecie",
             temp_c=16.5,
             wind_ms=4.2,
             humidity_pct=72.0,
             precip_mm=0.0
         )
-        self.assertEqual(obs.station, "Warszawa-Okęcie")
+        self.assertEqual(obs.station, "Warszawa-Okecie")
         self.assertEqual(obs.temp_c, 16.5)
 
 if __name__ == "__main__":

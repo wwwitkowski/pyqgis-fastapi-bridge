@@ -1,73 +1,73 @@
-# 🤝 Przewodnik Kontrybucji (CONTRIBUTING)
+# 🤝 Contributing Guide
 
-Dziękujemy za wkład w rozwój projektu **PyQGIS FastAPI Bridge**!  
-Niezależnie od tego, czy pracujesz samodzielnie, w zespole ludzkim, czy wspomagasz się agentami AI, w projekcie obowiązują poniższe zasady pracy z repozytorium, standardy kodu oraz konwencje commitów.
-
----
-
-## 🧭 Filozofia: Human-First Development
-
-W tym repozytorium obowiązuje żelazna zasada **Human-First**:
-* **Człowiek jest Architektem i Decydentem.** Wszystkie decyzje o architekturze, strukturze danych, doborze technologii i logice biznesowej podejmuje człowiek.
-* **AI jest Narzędziem Wykonawczym.** Asystenci AI (Copilot, Claude, Gemini, ChatGPT itp.) pełnią rolę precyzyjnych wykonawców poleceń – nigdy nie podejmują decyzji za człowieka, nie zmieniają architektury i nie dodają bibliotek bez wyraźnej dyspozycji.
-
-Szczegółowe wytyczne dla agentów sztucznej inteligencji znajdują się w plikach [`AGENTS.md`](AGENTS.md) w poszczególnych katalogach.
+Thank you for contributing to the **PyQGIS FastAPI Bridge** project!  
+Whether you are working individually, in an engineering team, or collaborating with AI coding assistants, please follow the repository workflow, code quality standards, and commit conventions detailed below.
 
 ---
 
-## 🎯 Model Pracy: Issue-Driven Development (Zwinny Podział Obowiązków)
+## 🧭 Philosophy: Human-First Development
 
-Aby utrzymać przejrzysty podział obowiązków, uniknąć konfliktów w kodzie i nie tamować tempa prac niepotrzebną biurokracją:
+This repository strictly adheres to the **Human-First** engineering principle:
+* **Humans are Architects and Decision Makers.** All decisions regarding system architecture, data structures, technology selection, and domain logic are made by humans.
+* **AI is an Execution Tool.** AI assistants (Copilot, Claude, Gemini, ChatGPT, Cursor, etc.) serve as precise executors of instructions — they never make architectural decisions on behalf of humans, never alter project scope, and never introduce dependencies without explicit instruction.
 
-1. **Każde zadanie zaczynamy od GitHub Issue:**
-   * Zanim zaczniesz pisać kod lub zlecisz zadanie agentowi AI, utwórz krótkie zgłoszenie w zakładce **Issues**.
-   * Wybierz szablon **🚀 Nowe Zadanie (Task)** lub utwórz zwięzłe zgłoszenie.
-2. **Lekki, nietamujący format Issue:**
-   Wystarczą 3 konkretne punkty:
-   * **Cel (1-2 zdania):** Co robimy i po co (np. *"Dodać endpoint pobierania obrysu działki w formacie GeoJSON z ULDK"*).
-   * **Moduł i Odpowiedzialny:** Kto bierze zadanie (`backend`, `qgis_plugin`, `web`, `docs`).
-   * **Checklista ukończenia (Definition of Done):** 2-3 punkty weryfikujące gotowość (np. `- [ ] endpoint zwraca 200 OK`, `- [ ] test jednostkowy przechodzi`).
-3. **Płynny przepływ (Issue $\rightarrow$ Branch $\rightarrow$ Commit):**
-   * Tworzymy gałąź powiązaną z zadaniem: np. `feat/12-uldk-geojson` (gdzie 12 to numer issue).
-   * Commit zamykający: `feat(backend): add uldk geojson endpoint (closes #12)`.
-   * Dzięki temu cały zespół od razu widzi, kto nad czym pracuje, bez chaosu i dublowania pracy.
+Detailed instructions for AI agents are specified in the [`AGENTS.md`](AGENTS.md) files across each directory.
 
 ---
 
-## 🌿 Model Pracy z Gitem (GitHub Flow)
+## 🎯 Workflow: Issue-Driven Development
 
-Pracujemy w oparciu o prosty, zwinny model **GitHub Flow**:
-1. Gałąź `master` (lub `main`) jest zawsze stabilna i gotowa do uruchomienia.
-2. Każdą nową funkcjonalność lub poprawkę tworzymy na dedykowanej gałęzi odchodzącej od `master`.
-3. Nazewnictwo gałęzi:
-   * `feat/<nazwa-funkcji>` – nowe funkcjonalności (np. `feat/uldk-polygon-loader`)
-   * `fix/<opis-bledu>` – naprawa błędów (np. `fix/crs-transformation-epsg2180`)
-   * `docs/<temat>` – zmiany w dokumentacji (np. `docs/update-datasets-guide`)
-   * `refactor/<zakres>` – przebudowa istniejącego kodu bez zmiany zachowania
-4. Po ukończeniu prac tworzymy Pull Request lub po weryfikacji przez człowieka scalamy do `master`.
+To maintain a transparent division of responsibilities, avoid code conflicts, and prevent bottlenecks from unnecessary bureaucracy:
+
+1. **Every task begins with a GitHub Issue:**
+   * Before writing code or prompting an AI agent, create a concise issue in the **Issues** tab.
+   * Choose the **🚀 New Task / Feature** template or provide a concise description.
+2. **Lightweight Issue Format:**
+   Three concise elements are sufficient:
+   * **Goal (1-2 sentences):** What is being built and why (e.g., *"Add an endpoint to retrieve parcel geometry in GeoJSON format from ULDK"*).
+   * **Module and Assignee:** Target component (`backend`, `qgis_plugin`, `web`, `docs`).
+   * **Definition of Done (Checklist):** 2-3 verification criteria (e.g., `- [ ] endpoint returns 200 OK`, `- [ ] unit tests pass`).
+3. **Smooth Flow (Issue $\rightarrow$ Branch $\rightarrow$ Commit):**
+   * Create a feature branch tied to the task: e.g., `feat/12-uldk-geojson` (where 12 is the issue number).
+   * Closing commit: `feat(backend): add uldk geojson endpoint (closes #12)`.
+   * This provides full team visibility into ongoing work without duplicated effort.
 
 ---
 
-## 📝 Konwencja Commitów (Conventional Commits)
+## 🌿 Git Workflow (GitHub Flow)
 
-Wszystkie commity w repozytorium **muszą** być formatowane zgodnie ze specyfikacją [Conventional Commits v1.0.0](https://www.conventionalcommits.org/):
+We use a simple, lightweight **GitHub Flow**:
+1. The `master` (or `main`) branch is always stable and ready to run.
+2. Every new feature, fix, or documentation update originates from a dedicated branch off `master`.
+3. Branch naming convention:
+   * `feat/<feature-name>` – new features (e.g., `feat/uldk-polygon-loader`)
+   * `fix/<bug-description>` – bug fixes (e.g., `fix/crs-transformation-epsg2180`)
+   * `docs/<topic>` – documentation changes (e.g., `docs/update-datasets-guide`)
+   * `refactor/<scope>` – code refactoring without behavior modification
+4. Upon completion, submit a Pull Request or merge into `master` after human review.
+
+---
+
+## 📝 Commit Conventions (Conventional Commits)
+
+All commits in this repository **must** follow the [Conventional Commits v1.0.0](https://www.conventionalcommits.org/) specification:
 
 ```text
-<typ>(<opcjonalny-zakres>): <zwięzły opis w trybie rozkazującym>
+<type>(<optional-scope>): <concise description in imperative mood>
 
-[opcjonalna treść wyjaśniająca motywację i kontekst zmiany]
+[optional body explaining motivation and context]
 ```
 
-### Dozwolone typy:
-* **`feat`** – dodanie nowej funkcjonalności (np. `feat(backend): add endpoint for parcel bounding box`)
-* **`fix`** – naprawa błędu (np. `fix(qgis): resolve task crash on empty polygon geometry`)
-* **`docs`** – zmiany wyłącznie w dokumentacji (np. `docs: add contributing guide and agent rules`)
-* **`refactor`** – refaktoryzacja kodu (np. `refactor(shared): simplify geo response schema`)
-* **`perf`** – optymalizacja wydajności (np. `perf(backend): cache spatial index lookups`)
-* **`test`** – dodanie lub modyfikacja testów jednostkowych
-* **`chore`** – prace porządkowe, konfiguracja repozytorium, skrypty pomocnicze (np. `chore: update gitignore`)
+### Allowed types:
+* **`feat`** – new feature (e.g., `feat(backend): add endpoint for parcel bounding box`)
+* **`fix`** – bug fix (e.g., `fix(qgis): resolve task crash on empty polygon geometry`)
+* **`docs`** – documentation only (e.g., `docs: add contributing guide and agent rules`)
+* **`refactor`** – code refactoring (e.g., `refactor(shared): simplify geo response schema`)
+* **`perf`** – performance improvement (e.g., `perf(backend): cache spatial index lookups`)
+* **`test`** – adding or updating unit tests
+* **`chore`** – maintenance, tooling, configuration (e.g., `chore: update gitignore`)
 
-### Przykłady poprawnych komunikatów:
+### Examples of valid commit messages:
 * `feat(ingestion): add retry logic to uldk connector`
 * `fix(plugin): prevent GUI freeze by offloading network request to QgsTask`
 * `docs(datasets): register new LiDAR WCS endpoint from GUGiK`
@@ -75,25 +75,25 @@ Wszystkie commity w repozytorium **muszą** być formatowane zgodnie ze specyfik
 
 ---
 
-## 💻 Standardy Jakości Kodu
+## 💻 Code Quality Standards
 
 ### 1. Python (Backend & Shared)
-* Kod zgodny z **PEP 8** (czytelne nazwy, wcięcia 4 spacje, przejrzyste moduły).
-* Obowiązkowe **Type Hints** we wszystkich sygnaturach funkcji i metod.
-* Używamy modeli **Pydantic** do walidacji danych wejściowych i wyjściowych API.
-* **Decyzja o zależnościach należy do człowieka:** Agent AI nie instaluje ani nie dodaje samowolnie nowych bibliotek. Wybór narzędzi (np. `httpx`, `requests`, `shapely`, `geopandas`) jest dyspozycją człowieka w ramach danego zadania.
+* Conformance to **PEP 8** (clear naming, 4-space indentation, clean module boundaries).
+* Mandatory **Type Hints** on all function and method signatures.
+* Use **Pydantic** models for all API request and response validation.
+* **Dependencies are controlled by humans:** AI agents do not autonomously install or add new dependencies. Choosing libraries (e.g., `httpx`, `requests`, `shapely`, `geopandas`) is directed by human developers.
 
-### 2. PyQGIS (Wtyczka QGIS)
-* **Wielowątkowość:** Żadne operacje I/O (zapytania sieciowe, ciężkie obliczenia na geometrii) **nie mogą** być wykonywane synchronicznie w głównym wątku GUI. Obowiązkowo używamy wzorca `QgsTask` (`AsyncApiTask`).
-* **Interfejs UI:** Wszystkie zmiany wizualne wykonujemy w Qt Designerze w pliku `dockwidget.ui`. Kod Pythona ładuje widok dynamicznie przez `uic.loadUiType` – nie kompilujemy ręcznie do `_ui.py`.
-* **Czyste logowanie:** Zamiast `print()` w konsoli systemowej, komunikaty dla użytkownika kierujemy do okna logów panelu lub paska informacyjnego `iface.messageBar()`.
+### 2. PyQGIS (QGIS Plugin)
+* **Multithreading:** I/O operations (network queries, heavy geometry computations) **must never** execute synchronously on the main GUI thread. The `QgsTask` pattern (`AsyncApiTask`) is mandatory.
+* **UI Layouts:** Visual interface adjustments are made in Qt Designer via `dockwidget.ui`. Python code dynamically loads the UI via `PyQt5.uic.loadUiType` — do not precompile to `_ui.py`.
+* **Clean Logging:** Direct user messages to the dock log widget or `iface.messageBar()` rather than raw console `print()`.
 
-### 3. Frontend Web (`web/`)
-* Czysty, lekki kod (HTML5, CSS, vanilla JS) zintegrowany z MapLibre GL JS.
-* Nie wprowadzamy ciężkich frameworków (Next.js, Vue, Angular) bez wyraźnej decyzji człowieka.
+### 3. Web Frontend (`web/`)
+* Lightweight, standards-based code (HTML5, CSS, vanilla JS) integrated with MapLibre GL JS.
+* Do not introduce heavy web frameworks (Next.js, Vue, Angular) without explicit human direction.
 
 ---
 
-## 🔒 Bezpieczeństwo i Higiena Danych
-1. **Nigdy nie commituj kluczy API, haseł ani tokenów!** Wszelkie wrażliwe dane trzymamy w plikach `.env` (plik ten jest ignorowany przez `.gitignore`).
-2. **Żadnych danych biznesowych ani pre-codingu:** Repozytorium przed startem oficjalnego wydarzenia musi zachować status uniwersalnej biblioteki narzędziowej.
+## 🔒 Security & Data Hygiene
+1. **Never commit API keys, secrets, or tokens!** Keep sensitive parameters in `.env` files (ignored by `.gitignore`).
+2. **Clean State:** Keep the repository clean, avoid checking in temporary artifacts, and maintain universal boilerplate neutrality.

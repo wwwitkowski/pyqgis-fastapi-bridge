@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Panel boczny wtyczki PyQGIS FastAPI Bridge.
-Wykorzystuje QgsTask do asynchronicznego odpytywania API w tle
-bez blokowania lub zawieszania interfejsu użytkownika QGIS.
+Side dock widget for the PyQGIS FastAPI Bridge plugin.
+Leverages QgsTask for non-blocking asynchronous background API queries
+without freezing or hanging the QGIS user interface.
+Supports connecting over Tailscale or local network interfaces.
 """
 
 import os
@@ -27,26 +28,28 @@ FORM_CLASS, _ = uic.loadUiType(UI_PATH)
 
 
 class AsyncApiTask(QgsTask):
-    """Zadanie w tle (QgsTask) wykonujące zapytanie sieciowe bez blokowania GUI."""
+    """Background worker task (QgsTask) executing network queries without blocking the GUI."""
 
-    def __init__(self, description, parcel_id, teryt_id, lat, lon, on_success_callback):
+    def __init__(self, description, parcel_id, teryt_id, lat, lon, on_success_callback, base_url=None):
         super().__init__(description, QgsTask.CanCancel)
         self.parcel_id = parcel_id
         self.teryt_id = teryt_id
         self.lat = lat
         self.lon = lon
+        self.base_url = base_url
         self.on_success = on_success_callback
         self.response_data = None
         self.error_msg = None
 
     def run(self):
-        """Metoda wykonywana w osobnym wątku systemowym."""
+        """Method executed on a separate worker thread."""
         try:
             self.response_data = BackendApiClient.analyze_parcel(
                 parcel_id=self.parcel_id,
                 teryt_id=self.teryt_id,
                 lat=self.lat,
-                lon=self.lon
+                lon=self.lon,
+                base_url=self.base_url
             )
             return True
         except Exception as e:
@@ -54,7 +57,7 @@ class AsyncApiTask(QgsTask):
             return False
 
     def finished(self, result):
-        """Metoda wywoływana w głównym wątku GUI po zakończeniu zadania."""
+        """Method invoked on the main GUI thread upon task completion."""
         if result and self.response_data:
             self.on_success(self.response_data)
 
@@ -66,6 +69,11 @@ class PyQgisBridgeDockWidget(QDockWidget, FORM_CLASS):
         super().__init__(parent)
         self.setupUi(self)
         self.iface = iface
+
+        # Initialize API URL from environment if set (useful for Tailscale / remote teammates)
+        default_api_url = os.environ.get("PYQGIS_BRIDGE_API_URL") or os.environ.get("API_BASE_URL")
+        if default_api_url and hasattr(self, "txtApiUrl"):
+            self.txtApiUrl.setText(default_api_url.replace("/api/v1", "").rstrip("/"))
 
         self.btnRefresh.clicked.connect(self.populate_layers)
         self.btnRun.clicked.connect(self.run_processing)
@@ -88,20 +96,23 @@ class PyQgisBridgeDockWidget(QDockWidget, FORM_CLASS):
                 self.cmbLayer.addItem(layer.name(), layer)
                 found += 1
 
-        self.log(f"Wczytano warstwy. Znaleziono poligonów: {found}")
+        self.log(f"Layers refreshed. Polygon layers found: {found}")
 
     def run_processing(self):
         layer = self.cmbLayer.currentData()
         if not layer or not layer.isValid():
-            self.log("BŁĄD: Wybierz poprawną warstwę wektorową!")
+            self.log("ERROR: Please select a valid vector layer!")
             return
 
         input_teryt = self.txtTeryt.text().strip()
+        custom_api_url = self.txtApiUrl.text().strip() if hasattr(self, "txtApiUrl") else None
 
         self.log(f"\n==================================================")
-        self.log(f" Start asynchronicznej analizy (QgsTask): {layer.name()}")
+        self.log(f" Starting async analysis (QgsTask): {layer.name()}")
+        if custom_api_url:
+            self.log(f" Target Server (Tailscale/Local): {custom_api_url}")
         if input_teryt:
-            self.log(f" Filtr TERYT / ID: {input_teryt}")
+            self.log(f" TERYT / Feature ID Filter: {input_teryt}")
         self.log(f"==================================================")
 
         src_crs = layer.crs()
@@ -123,27 +134,28 @@ class PyQgisBridgeDockWidget(QDockWidget, FORM_CLASS):
             lat, lon = wgs_pt.y(), wgs_pt.x()
 
             fid_str = str(feature.id())
-            name_attr = feature.attribute("name") if "name" in [f.name() for f in layer.fields()] else f"Obiekt #{fid_str}"
+            name_attr = feature.attribute("name") if "name" in [f.name() for f in layer.fields()] else f"Feature #{fid_str}"
 
-            # Tworzenie zadania asynchronicznego QgsTask
-            task_desc = f"Analiza {name_attr} ({lat:.3f}, {lon:.3f})"
+            # Create async QgsTask worker with configured server endpoint
+            task_desc = f"Analyzing {name_attr} ({lat:.3f}, {lon:.3f})"
             task = AsyncApiTask(
                 description=task_desc,
                 parcel_id=fid_str,
                 teryt_id=input_teryt,
                 lat=lat,
                 lon=lon,
-                on_success_callback=self.on_task_completed
+                on_success_callback=self.on_task_completed,
+                base_url=custom_api_url
             )
 
-            # Rejestracja w menedżerze zadań QGIS (pasek zadań na dole QGIS)
+            # Register with QGIS Task Manager (status bar in lower right of QGIS)
             QgsApplication.taskManager().addTask(task)
             processed += 1
 
-        self.log(f"Zlecono {processed} zadań w tle (QgsTask). Interfejs QGIS pozostaje w pełni responsywny!")
+        self.log(f"Dispatched {processed} background tasks (QgsTask). QGIS UI remains fully responsive!")
 
     def on_task_completed(self, data):
-        """Slot odbierający wyniki z wątku tła i aktualizujący GUI."""
+        """Slot receiving results from the worker thread and updating the GUI."""
         current_val = self.progressBar.value() + 1
         self.progressBar.setValue(current_val)
 
@@ -151,6 +163,6 @@ class PyQgisBridgeDockWidget(QDockWidget, FORM_CLASS):
         status = data.get("status", "N/A")
         metrics = data.get("metrics", {})
 
-        self.log(f"✓ Wynik dla obiektu #{pid} [Status: {status}]")
+        self.log(f"✓ Result for feature #{pid} [Status: {status}]")
         for k, v in metrics.items():
             self.log(f"   -> {k}: {v}")
