@@ -45,13 +45,21 @@ Designed as a general-purpose geospatial developer toolkit for spatial analytics
 
 ## 🚀 Quick Start
 
-### 1. QGIS Plugin
+### 0. Prerequisites & Recommended Environment
+* **QGIS:** Recommended official **QGIS 3.44.15 LTR** (Long Term Release) from [qgis.org](https://qgis.org/).
+* **Python:** Python 3.10, 3.11, 3.12 or 3.13.
+* **OS:** Windows, macOS, or Linux.
+
+### 1. QGIS Plugin & Sample Project
 The plugin can be linked directly into your active QGIS user profile:
-1. Open the sample project: **[`sample_project/sample_project.qgs`](sample_project/sample_project.qgs)**.
-2. Go to **Plugins $\rightarrow$ Manage and Install Plugins...** $\rightarrow$ **Installed** tab and enable:  
+1. **Link the plugin (1-click):** Run `link_plugin.bat` (Windows) or `./link_plugin.sh` (macOS/Linux).
+2. **Open sample data in QGIS:**
+   * Open the project file **[`sample_project/sample_project.qgs`](sample_project/sample_project.qgs)** or simply drag & drop **[`sample_project/sample_polygons.geojson`](sample_project/sample_polygons.geojson)** into the QGIS map window.
+   * Right-click the `sample_polygons` layer $\rightarrow$ **Zoom to Layer** to center on the sample test polygons.
+3. **Enable plugin:** Go to **Plugins $\rightarrow$ Manage and Install Plugins...** $\rightarrow$ **Installed** tab and enable:  
    ☑️ **`PyQGIS FastAPI Bridge`**.
-3. Click the bridge icon on the toolbar to open the dock widget panel.
-4. Click **`▶ Run Analysis (FastAPI)`** – processing tasks dispatch to the QGIS task manager (`QgsTask`), with results streaming into the dock log without UI interruption.
+4. Click the bridge icon on the toolbar to open the dock widget panel.
+5. Click **`▶ Run Analysis (FastAPI)`** – processing tasks dispatch to the QGIS task manager (`QgsTask`), with results streaming into the dock log without UI interruption.
 
 ### 2. FastAPI Backend
 Start the analytical server with a single command:
@@ -70,8 +78,9 @@ Run the comprehensive test suite (16 tests covering API endpoints, Pydantic sche
 * **GitHub Actions:** Automated CI runs on every push and pull request (`.github/workflows/test.yml`).
 
 ### 4. Interactive Web Viewer
-Open the viewer in any modern web browser:  
-👉 **[`web/index.html`](web/index.html)**
+The frontend map viewer is served directly by the FastAPI backend (no extra node/frontend setup required):
+* Open in browser: 👉 **[http://127.0.0.1:8000](http://127.0.0.1:8000)** (or over Tailscale: `http://<tailscale-ip>:8000`)
+* Standalone template file: [`web/index.html`](web/index.html)
 
 ### 5. Tailscale Team Collaboration (Live P2P without GitHub Sync)
 Team members on the same **Tailscale** mesh network (tailnet) can interact with services running on each other's workstations directly without needing continuous Git commits or GitHub pulls:

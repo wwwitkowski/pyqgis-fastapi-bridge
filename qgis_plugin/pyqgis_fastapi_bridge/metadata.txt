@@ -1,12 +1,12 @@
 [general]
 name=PyQGIS FastAPI Bridge
-qgisMinimumVersion=3.0
+qgisMinimumVersion=3.44
 qgisMaximumVersion=3.99
 description=Asynchronous infrastructure bridge connecting QGIS with FastAPI backend for geospatial analytics.
 version=0.1.0
 author=wwwitkowski
 email=wwitkowski.important@gmail.com
-about=General-purpose developer boilerplate connecting QGIS (via QgsTask) with FastAPI and MapLibre for geospatial pipelines.
+about=General-purpose developer boilerplate connecting QGIS 3.44+ LTR (via QgsTask) with FastAPI and MapLibre for geospatial pipelines.
 tracker=https://github.com/wwwitkowski/pyqgis-fastapi-bridge/issues
 repository=https://github.com/wwwitkowski/pyqgis-fastapi-bridge
 hasProcessingProvider=no
