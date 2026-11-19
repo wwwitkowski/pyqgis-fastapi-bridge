@@ -36,25 +36,25 @@ echo [2/4] Linking QGIS plugin to user profile...
 call "%~dp0link_plugin.bat" --no-pause >nul 2>&1
 echo       [OK] QGIS plugin junction verified.
 
-echo [3/4] Checking Docker stack (PostGIS + TiTiler)...
+echo [3/4] Checking Docker stack...
 docker info >nul 2>&1
 if !ERRORLEVEL! EQU 0 (
     docker compose -f "%~dp0docker\docker-compose.yml" up -d >nul 2>&1
-    echo       [OK] Docker containers active: PostGIS (5432), TiTiler (8080).
+    echo       [OK] Docker containers active: PostGIS - 5432, TiTiler - 8080.
 ) else (
     echo       [INFO] Docker Desktop is not running. Skipping database container start.
 )
 
-echo [4/4] Starting FastAPI backend server & Web UI on http://127.0.0.1:8000...
+echo [4/4] Starting FastAPI backend server and Web UI on http://127.0.0.1:8000...
 start "" "!PYTHON_EXE!" "%~dp0backend\run_backend.py"
 
 :: Wait 2 seconds and open browser
-timeout /t 2 /nobreak >nul
+timeout /t 2 /nobreak >nul 2>&1
 start "" "http://127.0.0.1:8000"
 
 echo.
 echo ========================================================
-echo   STACK SUCCESSFULLY STARTED!
+echo   STACK SUCCESSFULLY STARTED
 echo ========================================================
 echo   - Web Viewer:  http://127.0.0.1:8000
 echo   - Swagger API: http://127.0.0.1:8000/docs
