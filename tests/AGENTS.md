@@ -1,48 +1,40 @@
-# 🤖 Instructions for AI Agents: Testing Module (`tests/`)
+# Testing Guidelines (`tests/`)
 
-> **FOR EVERY AI AGENT AND CODING ASSISTANT:**  
-> Read this document before authoring, modifying, or proposing tests in this repository.
-
----
-
-## 🛑 TESTING PRINCIPLES (HUMAN-FIRST TESTING)
-
-This project strictly adheres to **Human-First Testing**. Humans determine test architecture, verification goals, and acceptance criteria. AI agents are executors and have no authority to arbitrarily expand test suites.
-
-### 🚫 STRICT PROHIBITIONS (Zero Tolerance):
-1. **NO TRIVIAL OR SUPERFLUOUS TESTS (Zero Test Bloat):**
-   * Do not write tests verifying Python language semantics (e.g. testing whether `1 + 1 == 2`, whether `list.append()` appends, or whether dictionary keys persist).
-   * Do not test plain getters/setters, empty constructors, or trivial assignments lacking validation logic.
-   * Do not generate vanity tests solely to artificially increase code coverage.
-2. **NO UNAUTHORIZED TEST SUITES OR FILES:**
-   * AI agents **must not create new test files** without explicit human direction defining the scope and purpose.
-   * If you spot an unhandled edge case, ask the human user: *"Would you like me to add a test verifying scenario X?"*.
-3. **NO DIRECT EXTERNAL NETWORK CALLS (Zero Live Network in Tests):**
-   * No unit test may dispatch real HTTP requests to external servers (ULDK, IMGW, Open-Meteo, etc.).
-   * All external integrations must use mocks (`unittest.mock`), stubs, or offline fallback validation (`test_ingestion_offline.py`).
-4. **NO FLAKY OR UNSTABLE TESTS:**
-   * No `time.sleep()`, unseeded pseudorandom values, or assumptions dependent on local timezone or location.
+Review root `AGENTS.md` and `CONTRIBUTING.md` before making modifications.
 
 ---
 
-## 🎯 WHAT AI AGENTS SHOULD TEST (When Instructed):
+## Testing Principles
 
-1. **Data Contracts & Pydantic Schemas (`test_schemas.py`):**
-   * Ensure malformed coordinates and invalid types trigger appropriate validation exceptions (`ValidationError`).
-   * Verify GeoJSON serialization and deserialization conform to RFC 7946 specifications.
-2. **Coordinate Transformations & Metric Calculations (`test_crs_and_geometry.py`):**
-   * Validate that conversions between EPSG:2180 and EPSG:4326/EPSG:3857 remain within precision tolerances.
-   * Verify polygon area calculations in $m^2$ and hectares handle boundaries correctly and reject degenerated geometries.
-3. **Error Handling & Graceful Degradation (Fallback):**
-   * Verify behavior under empty API payloads, HTTP 500 errors, timeouts, and malformed JSON or WKT.
-4. **QGIS Plugin Structure & Environment Isolation (`test_qgis_plugin.py`):**
-   * Verify `metadata.txt` validity, import cleanliness, and absence of GUI exceptions in headless test environments.
+1. **Focused coverage:** Test domain boundaries, coordinate conversions, schema contracts, and error handling. Avoid superficial tests written purely to inflate coverage.
+2. **No live network requests:** Unit tests must never query live external endpoints (GUGiK, IMGW, etc.). Use mocks (`unittest.mock`), stubs, or offline fixture validation.
+3. **Deterministic execution:** No timing-dependent assertions (`time.sleep`), unseeded random values, or timezone-sensitive logic.
+4. **Standard library runner:** Use standard Python `unittest`. Tests must run out-of-the-box without requiring specialized test runners.
 
 ---
 
-## 🛠️ TECHNICAL TESTING STANDARDS
+## Test Suite Structure
 
-* **Framework:** Standard Python standard library `unittest`.
-* **Zero new dependencies:** Tests must run in a vanilla Python environment without requiring mandatory third-party test runners (e.g. `pytest`, unless requested).
-* **Path Isolation:** Every test file dynamically resolves repository root via `sys.path.insert(0, ...)`.
-* **Conditional Skipping:** For optional dependencies (such as `fastapi` or `pydantic`), tests must use `@unittest.skipIf(not MODULE_AVAILABLE, "Reason for skip")` to ensure test execution passes in any environment.
+```text
+tests/
+├── test_api.py                 # FastAPI endpoints (/health, /api/v1/analysis)
+├── test_crs_and_geometry.py    # EPSG:2180 / EPSG:4326 transforms and bounds
+├── test_ingestion_offline.py   # ULDK and IMGW connectors (offline / mocked)
+├── test_qgis_plugin.py         # Plugin metadata, layout, and client fallback
+└── test_schemas.py             # Pydantic schemas and serialization
+```
+
+---
+
+## Running Tests
+
+```bash
+# Windows
+run_tests.bat
+
+# Linux / macOS
+./run_tests.sh
+
+# Python CLI
+python -m unittest discover -s tests -p "test_*.py" -v
+```

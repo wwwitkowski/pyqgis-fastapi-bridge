@@ -1,30 +1,26 @@
-# 🤖 Instructions for AI Agents: Container Module (`docker/`)
+# Docker Guidelines (`docker/`)
 
-> Before editing files in this directory, review the root [`/AGENTS.md`](../AGENTS.md) and [`/CONTRIBUTING.md`](../CONTRIBUTING.md).
-
----
-
-## 🎯 Scope and Role of the Module
-The `docker/` directory contains optional container definitions for developers deploying spatial databases and auxiliary services via `docker compose`. It includes:
-1. **PostGIS** spatial database (`postgis/postgis:15-3.3`).
-2. **MinIO** local S3-compatible object storage for Cloud Optimized GeoTIFF (COG) rasters.
-3. **TiTiler** dynamic tile server (`ghcr.io/developmentseed/titiler`).
+Review root `AGENTS.md` and `CONTRIBUTING.md` before making modifications.
 
 ---
 
-## 📂 Directory Structure
+## Scope and Role
+The `docker/` directory contains optional container orchestration files for deploying auxiliary spatial services:
+1. **PostGIS** spatial database (`postgis/postgis:15-3.3` on port 5432).
+2. **MinIO** S3-compatible object store for Cloud Optimized GeoTIFF (COG) rasters (ports 9000/9001).
+3. **TiTiler** dynamic tile server (`ghcr.io/developmentseed/titiler` on port 8080).
+
+---
+
+## Directory Structure
 ```text
 docker/
-└── docker-compose.yml       # Service definitions: postgis (5432), minio (9000/9001), titiler (8080)
+└── docker-compose.yml       # PostGIS, MinIO, and TiTiler service definitions
 ```
 
 ---
 
-## 🛑 Docker-Specific Rules (`Hard Constraints`)
-
-1. **Strictly Optional Status:**
-   * Docker tooling is **completely optional**. The QGIS plugin and FastAPI server (`run_backend.py`) must operate cleanly without requiring running Docker containers.
-   * Do not introduce hard runtime dependencies in Python code requiring a running PostGIS instance for baseline operations.
-2. **Neutral Naming and Security:**
-   * Container and database service names must remain neutral (`spatial_postgis`, `spatial_db`, `spatial_minio`).
-   * Configuration variables should be easily overridden via a `.env` file.
+## Guidelines
+1. **Strictly optional:** The baseline project (FastAPI backend, QGIS plugin, and web viewer) operates without Docker. Do not introduce hard runtime dependencies on running containers.
+2. **Neutral naming:** Keep service and container names generic (`spatial_postgis`, `spatial_minio`, `titiler`).
+3. **Configuration:** Keep credentials configurable via environment variables in `.env`.

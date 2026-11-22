@@ -1,11 +1,11 @@
-# 🗺️ Registry of Polish and European Public Spatial Data (GIS)
+# Registry of Polish and European Public Spatial Data (GIS)
 
-> Comprehensive knowledge repository of official, open state registries, web services (WMS, WFS, WCS, REST API), and remote sensing sources for spatial, environmental, infrastructure, and hydrological analytics in Poland.  
+> Comprehensive reference of official, open state registries, web services (WMS, WFS, WCS, REST API), and remote sensing sources for spatial, environmental, infrastructure, and hydrological analytics in Poland.  
 > Source tabular file: [`polish_public_gis_registries.csv`](polish_public_gis_registries.csv).
 
 ---
 
-## 📑 Table of Contents and Service Categories
+## Table of Contents and Service Categories
 
 1. [Cadastre, Administrative Boundaries & Land Registry](#1-cadastre-administrative-boundaries--land-registry)
 2. [Digital Elevation Models, LiDAR & Photogrammetry](#2-digital-elevation-models-lidar--photogrammetry)

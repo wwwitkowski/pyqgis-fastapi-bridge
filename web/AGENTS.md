@@ -1,33 +1,26 @@
-# 🤖 Instructions for AI Agents: Web Module (`web/`)
+# Web Viewer Guidelines (`web/`)
 
-> Before editing files in this directory, review the root [`/AGENTS.md`](../AGENTS.md) and [`/CONTRIBUTING.md`](../CONTRIBUTING.md).
-
----
-
-## 🎯 Scope and Role of the Module
-The `web/` directory provides a lightweight in-browser map viewer used to:
-1. Visualize spatial data (GeoJSON vector layers and raster base maps) using **MapLibre GL JS**.
-2. Demonstrate querying FastAPI backend endpoints (`/api/v1/analysis/...`) directly from a web browser.
-3. Validate server-side CORS header configuration.
+Review root `AGENTS.md` and `CONTRIBUTING.md` before making modifications.
 
 ---
 
-## 📂 Directory Structure
+## Scope and Role
+The `web/` directory contains the in-browser map viewer used to:
+1. Render GeoJSON vector overlays on OpenStreetMap raster tiles using **MapLibre GL JS**.
+2. Query FastAPI backend endpoints directly from a browser.
+3. Validate CORS and network connectivity across local machines or Tailscale.
+
+---
+
+## Directory Structure
 ```text
 web/
-└── index.html              # Standalone map viewer (HTML5 + CSS + vanilla JS + MapLibre GL JS)
+└── index.html              # Standalone web map (HTML5 + vanilla JS + MapLibre GL JS)
 ```
 
 ---
 
-## 🛑 Web-Specific Rules (`Hard Constraints`)
-
-1. **No Heavy Frontend Frameworks:**
-   * Do not install or configure Next.js, React, Vue, Angular, Vite, or Webpack projects without explicit human direction.
-   * This module must remain ultralightweight — openable directly from disk as `index.html` or served as static files.
-2. **Map Visualization Standards:**
-   * Use the open-source **MapLibre GL JS** library (not Mapbox GL, which requires paid token keys).
-   * Use free OpenStreetMap tiles as default basemap (`https://tile.openstreetmap.org/{z}/{x}/{y}.png`).
-3. **API Communication:**
-   * Execute network requests via the standard browser `fetch()` API.
-   * Always handle network errors (`try-catch`), providing users with clear status messages regarding local backend connectivity.
+## Guidelines
+1. **Lightweight architecture:** Keep this module framework-free (plain HTML5, CSS, vanilla JavaScript). Do not introduce node build tools or frameworks unless requested.
+2. **Map rendering:** Use MapLibre GL JS (open source, no API key required) and standard OpenStreetMap tiles (`https://tile.openstreetmap.org/{z}/{x}/{y}.png`).
+3. **API communication:** Use standard browser `fetch()`. Always wrap requests in `try-catch` with clear status feedback and offline fallback representation.

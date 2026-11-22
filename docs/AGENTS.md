@@ -1,33 +1,28 @@
-# 🤖 Instructions for AI Agents: Documentation Module (`docs/`)
+# Documentation Guidelines (`docs/`)
 
-> Before editing files in this directory, review the root [`/AGENTS.md`](../AGENTS.md) and [`/CONTRIBUTING.md`](../CONTRIBUTING.md).
+Review root `AGENTS.md` and `CONTRIBUTING.md` before making modifications.
 
 ---
 
-## 🎯 Scope and Role of the Module
-The `docs/` directory is the central geospatial knowledge base for the project. It contains:
+## Scope and Role
+The `docs/` directory maintains the geospatial knowledge base for the project:
 1. Catalog of open Polish and European spatial data services (WMS, WFS, WCS, STAC API, REST).
-2. Technical specifications and access descriptions for official public datasets (GUGiK, IMGW, IUNG, GIOS, PIG, Copernicus).
-3. Technical guidelines and integration specifications.
+2. Technical specifications for public datasets (GUGiK, IMGW, IUNG, GIOŚ, PIG, Copernicus).
+3. Screenshot assets for visual documentation (`docs/images/`).
 
 ---
 
-## 📂 Directory Structure
+## Directory Structure
 ```text
 docs/
-├── polish_public_gis_registries.csv   # Structured data sources table (46 official services)
-└── polish_public_gis_registries.md    # Detailed guide categorized by domain
+├── images/                            # System screenshots for README and documentation
+├── polish_public_gis_registries.csv   # Machine-readable registry catalog
+└── polish_public_gis_registries.md    # Detailed reference guide categorized by domain
 ```
 
 ---
 
-## 🛑 Documentation-Specific Rules (`Hard Constraints`)
-
-1. **Dual-Sync Consistency:**
-   * Any change or addition of a data source **must** be mirrored in both files simultaneously:
-     * In the machine-readable table `polish_public_gis_registries.csv` (semicolon delimited `;`),
-     * In the human-readable guide `polish_public_gis_registries.md` (Markdown table).
-2. **Technological Neutrality:**
-   * Maintain a neutral, engineering, and geographic reference character as a universal GIS knowledge base.
-3. **Link Authenticity:**
-   * Only link to verified, official state and institutional portals (e.g. `.gov.pl`, `.imgw.pl`, `.europa.eu` domains).
+## Guidelines
+1. **Sync consistency:** Any added or updated spatial data source must be reflected in both the CSV table (`polish_public_gis_registries.csv`) and the Markdown guide (`polish_public_gis_registries.md`).
+2. **Verified endpoints:** Only reference verified, official public portals (`.gov.pl`, `.imgw.pl`, `.europa.eu`).
+3. **Screenshot organization:** Keep visual assets inside `docs/images/`.

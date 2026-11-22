@@ -1,54 +1,44 @@
-# 🤖 Instructions for AI Agents: QGIS Plugin Module (`qgis_plugin/`)
+# QGIS Plugin Guidelines (`qgis_plugin/`)
 
-> Before editing files in this directory, review the root [`/AGENTS.md`](../AGENTS.md) and [`/CONTRIBUTING.md`](../CONTRIBUTING.md).
-
----
-
-## 🎯 Scope and Role of the Module
-The `qgis_plugin/` directory contains the plugin code for the **QGIS 3** desktop workstation (`PyQGIS`). It is responsible for:
-1. Registering actions, menu items, and toolbar buttons in the QGIS interface (`plugin.py`, `metadata.txt`).
-2. Displaying the side dock widget (**QDockWidget**) designed in Qt Designer.
-3. **Asynchronous communication with the FastAPI backend** in a background worker thread via `QgsTask` (`AsyncApiTask`).
-4. Safe interaction with the QGIS map canvas (layer feature reading, coordinate transformation to EPSG:4326/EPSG:2180, result rendering).
+Review root `AGENTS.md` and `CONTRIBUTING.md` before making modifications.
 
 ---
 
-## 📂 Directory Structure
+## Scope and Role
+The `qgis_plugin/` directory contains the PyQGIS desktop plugin for QGIS 3 (tested with QGIS 3.44.15 LTR). It handles:
+1. Registering toolbar actions and menus in QGIS (`plugin.py`, `metadata.txt`).
+2. Managing the dock widget panel layout (`gui/dockwidget.ui`).
+3. Asynchronous background communication with FastAPI via `QgsTask` (`AsyncApiTask`).
+4. Canvas interaction, layer selection, coordinate transformation, and metric logging.
+
+---
+
+## Directory Structure
 ```text
 qgis_plugin/
 └── pyqgis_fastapi_bridge/
     ├── __init__.py           # classFactory(iface) - QGIS plugin entry point
     ├── metadata.txt          # QGIS Plugin Manager metadata
-    ├── plugin.py             # Action, menu, and dock widget lifecycle management
+    ├── plugin.py             # Action, menu, and dock widget lifecycle
     ├── icon.png              # Plugin toolbar icon
     ├── gui/
-    │   ├── dockwidget.py     # Dock widget logic: QgsTask, event and signal handling
+    │   ├── dockwidget.py     # Dock logic, QgsTask dispatch, signal handling
     │   └── dockwidget.ui     # Qt Designer XML layout
     ├── core/
-    │   └── api_client.py     # HTTP client querying backend with offline fallback mode
+    │   └── api_client.py     # HTTP client querying backend with offline fallback
     └── styles/
         └── categorized_style.qml # Sample QGIS layer style templates
 ```
 
 ---
 
-## 🛑 PyQGIS-Specific Rules (`Hard Constraints`)
-
-1. **NEVER BLOCK THE MAIN GUI THREAD:**
-   * No network I/O (`urllib.request`, `http`) or heavy geometry computation may run directly inside button click handlers.
-   * Always employ the `QgsTask` multithreading pattern (as implemented in `AsyncApiTask`). Perform network queries in `run()` and GUI updates in `finished()`.
-2. **Dynamic UI Loading (`loadUiType`):**
-   * Edit `dockwidget.ui` using Qt Designer (launchable via `open_designer.bat`).
-   * **Never compile `.ui` files to `.py`** using `pyuic5`. The UI is loaded dynamically at runtime via `PyQt5.uic.loadUiType()`.
-3. **Relative Paths and Symbolic Linking:**
-   * All file references (e.g., `dockwidget.ui`, `icon.png`) must be constructed relatively using `os.path.join(os.path.dirname(__file__), ...)`.
-   * The plugin is linked to the active QGIS profile via directory junction / symlink (`deploy.py`). Do not hardcode paths to `%APPDATA%` or drive letters.
-4. **Coordinate Reference System (CRS) Standards & Null Island Prevention:**
-   * The project standard display and analytical CRS is **`EPSG:2180 (PUWG 1992 / ETRF2000-PL)`** — all Polish cadastre (ULDK), GUGiK, and field metrics are in meters/hectares under this system.
-   * GeoJSON standard storage is strictly **`EPSG:4326 (WGS84 Lon/Lat)`**.
-   * Web tile backends (e.g., OpenStreetMap) operate in **`EPSG:3857 (Web Mercator)`**.
-   * When creating, exporting, or modifying QGIS projects or vector layers:
-     * Never leave project CRS unassigned (`None`), as degrees will be interpreted as meters, throwing coordinates into Null Island (Gulf of Guinea / São Tomé).
-     * Always enforce `<projectflags><flags><relativePaths>1</relativePaths></flags></projectflags>` in `.qgs`/`.qgz` project files so datasets load seamlessly across teammate machines.
-5. **Geometry Validity Checks:**
-   * Always verify that layers are valid (`layer.isValid()`) and geometries are non-empty (`not geom.isEmpty()`) before calculating centroids or performing coordinate transforms.
+## Guidelines
+1. **Never block the main GUI thread:** Network calls and heavy geometry processing must run inside `QgsTask`. The `AsyncApiTask` implementation performs HTTP requests in `run()` and applies UI updates in `finished()`.
+2. **Dynamic UI loading:** Edit `dockwidget.ui` using Qt Designer. Do not precompile `.ui` files to Python code; the plugin loads the layout at runtime using `PyQt5.uic.loadUiType()`.
+3. **Relative paths:** Always construct asset paths relatively with `os.path.join(os.path.dirname(__file__), ...)`.
+4. **CRS standards:**
+   - Analytical & project display CRS: `EPSG:2180 (PUWG 1992)`.
+   - Data exchange & GeoJSON storage: `EPSG:4326 (WGS 84 Lon/Lat)`.
+   - Web tiles: `EPSG:3857 (Web Mercator)`.
+   - Always ensure project CRS is explicitly assigned to prevent degree coordinates being treated as meters.
+5. **Geometry checks:** Verify `layer.isValid()` and `not geom.isEmpty()` before calculating centroids or running transformations.
