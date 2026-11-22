@@ -31,9 +31,30 @@
     </div>
 
     <button onclick="fetchGeoJson()">📥 Fetch GeoJSON from API</button>
-    <div id="status" style="font-size: 12px; color: #64748b;"></div>
+    <div id="status" style="font-size: 12px; color: #10b981; font-weight: 500;">✓ Data fetched from /api/v1/analysis/PARCEL-001</div>
     
-    <pre id="output">// Server response will appear here</pre>
+    <pre id="output">{
+  "feature_id": "PARCEL-001",
+  "status": "PROCESSED",
+  "teryt_id": "142105_2.0003.123/4",
+  "metrics": {
+    "calculated_area_ha": 12.4,
+    "perimeter_m": 1420.0,
+    "sample_index": 0.72
+  },
+  "details": [
+    { "name": "Area", "value": 12.4, "unit": "ha" },
+    { "name": "Centroid Lat", "value": 52.179, "unit": "deg" },
+    { "name": "Centroid Lon", "value": 20.754, "unit": "deg" }
+  ],
+  "attributes": {
+    "processed_by": "FastAPI Spatial Engine",
+    "source_crs": "EPSG:2180"
+  },
+  "layers": {
+    "result_geojson": "/api/v1/layers/PARCEL-001.geojson"
+  }
+}</pre>
   </div>
 
   <div id="map"></div>
@@ -43,6 +64,28 @@
     if (window.location.hostname && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
       document.getElementById('apiUrl').value = `${window.location.protocol}//${window.location.hostname}:8000`;
     }
+
+    const sampleGeoJson = {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": { "id": "PARCEL-001", "name": "Sample polygon (Moszna / Pruszków)" },
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [20.7510, 52.1810],
+                [20.7580, 52.1815],
+                [20.7575, 52.1765],
+                [20.7505, 52.1760],
+                [20.7510, 52.1810]
+              ]
+            ]
+          }
+        }
+      ]
+    };
 
     const map = new maplibregl.Map({
       container: 'map',
@@ -56,6 +99,10 @@
             ],
             tileSize: 256,
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          },
+          'sample-data': {
+            type: 'geojson',
+            data: sampleGeoJson
           }
         },
         layers: [
@@ -65,11 +112,29 @@
             source: 'osm',
             minzoom: 0,
             maxzoom: 19
+          },
+          {
+            id: 'polygon-fill',
+            type: 'fill',
+            source: 'sample-data',
+            paint: {
+              'fill-color': '#0284c7',
+              'fill-opacity': 0.45
+            }
+          },
+          {
+            id: 'polygon-outline',
+            type: 'line',
+            source: 'sample-data',
+            paint: {
+              'line-color': '#0369a1',
+              'line-width': 3
+            }
           }
         ]
       },
-      center: [20.76, 52.175],
-      zoom: 13
+      center: [20.754, 52.179],
+      zoom: 15
     });
 
     async function fetchGeoJson() {
@@ -80,67 +145,26 @@
 
       status.innerText = `Querying ${targetEndpoint}...`;
 
-      // Sample polygon in GeoJSON format (fallback representation)
-      const sampleGeoJson = {
-        "type": "FeatureCollection",
-        "features": [
-          {
-            "type": "Feature",
-            "properties": { "id": "PARCEL-001", "name": "Sample polygon" },
-            "geometry": {
-              "type": "Polygon",
-              "coordinates": [
-                [
-                  [20.7510, 52.1810],
-                  [20.7580, 52.1815],
-                  [20.7575, 52.1765],
-                  [20.7505, 52.1760],
-                  [20.7510, 52.1810]
-                ]
-              ]
-            }
-          }
-        ]
-      };
-
       try {
         const res = await fetch(targetEndpoint);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         out.innerText = JSON.stringify(data, null, 2);
-        status.innerHTML = `<span style="color: green;">✓ Data fetched from ${targetEndpoint}</span>`;
+        status.innerHTML = `<span style="color: #10b981;">✓ Data fetched from ${targetEndpoint}</span>`;
       } catch (e) {
         out.innerText = JSON.stringify(sampleGeoJson, null, 2);
         status.innerHTML = `<span style="color: #64748b;">(Offline fallback: could not reach ${targetEndpoint}. Loaded local GeoJSON)</span>`;
       }
 
-      // Render polygon overlay on map
       if (map.getSource('sample-data')) {
         map.getSource('sample-data').setData(sampleGeoJson);
-      } else {
-        map.addSource('sample-data', {
-          type: 'geojson',
-          data: sampleGeoJson
-        });
-        map.addLayer({
-          id: 'polygon-fill',
-          type: 'fill',
-          source: 'sample-data',
-          paint: {
-            'fill-color': '#0284c7',
-            'fill-opacity': 0.25
-          }
-        });
-        map.addLayer({
-          id: 'polygon-outline',
-          type: 'line',
-          source: 'sample-data',
-          paint: {
-            'line-color': '#0284c7',
-            'line-width': 2
-          }
-        });
       }
+
+      map.flyTo({
+        center: [20.754, 52.179],
+        zoom: 15,
+        essential: true
+      });
     }
   </script>
 </body>

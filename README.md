@@ -1,112 +1,160 @@
-# 🌉 PyQGIS FastAPI Bridge
+# PyQGIS FastAPI Bridge
 
-> **Asynchronous Developer Boilerplate** bridging the **QGIS (PyQGIS)** desktop workstation, **FastAPI** analytical server, and **MapLibre GL JS** interactive web map.
+A boilerplate connecting desktop QGIS, a FastAPI spatial analytics backend, and a MapLibre GL JS web map.
 
-Designed as a general-purpose geospatial developer toolkit for spatial analytics, urban planning, land administration, transport modeling, hydrology, and environmental management. Features a non-blocking multithreaded communication pipeline, ready-to-use integrations with official public GIS APIs (**GUGiK ULDK, IMGW**), and native coordinate reference system conversions for **EPSG:2180 (PUWG 1992)**.
+Built for spatial engineering workflows that require background processing without freezing QGIS, unified Pydantic schemas, and ready-to-use connectors for Polish public GIS registries (GUGiK ULDK, IMGW) with native support for EPSG:2180 (PUWG 1992).
 
 ---
 
-## 🏗️ Architecture and Data Flow
+## Overview
+
+| Web Map Viewer (MapLibre GL JS + OSM) | QGIS Desktop Plugin (PyQGIS DockWidget) |
+| :---: | :---: |
+| ![MapLibre Web Viewer](docs/images/maplibre_geojson_fetched.png) | ![QGIS Plugin](docs/images/dockwidget_analyzed_screenshot.png) |
+| *Browser viewer with fetched GeoJSON polygon overlay and API output* | *QGIS dock panel with asynchronous `QgsTask` processing and logs* |
+
+<p align="center">
+  <img src="docs/images/swagger_docs_screenshot.png" alt="FastAPI Swagger UI" width="95%" />
+  <br />
+  <em>Interactive OpenAPI documentation served at <code>/docs</code></em>
+</p>
+
+---
+
+## Architecture
 
 ```text
                    ┌──────────────────────────────────────────────┐
-                   │             BACKEND (FASTAPI)                │
-                   │   Async REST API + ULDK GUGiK + IMGW         │
+                   │             Backend (FastAPI)                │
+                   │   Async REST API + GUGiK ULDK + IMGW Telemetry│
                    └──────────────────────┬───────────────────────┘
                                           │  REST API (Pydantic / GeoJSON)
                   ┌───────────────────────┴───────────────────────┐
                   ▼                                               ▼
-     🖥️ QGIS PLUGIN                                  🌐 WEB VIEWER
-     (PyQGIS + background QgsTask)                   (MapLibre GL JS)
-     Zero UI freezing during network                 Lightweight in-browser map
-     requests and spatial computation                with GeoJSON vector layers
+         QGIS Plugin                                     Web Viewer
+     (PyQGIS + QgsTask)                              (MapLibre GL JS)
+  Runs requests in background thread;            In-browser map with GeoJSON
+  zero UI freeze during processing               layers on OpenStreetMap tiles
 ```
 
 ---
 
-## ⚡ Key Infrastructure Features
+## Core Features
 
-1. **Non-blocking Multithreading in QGIS (`QgsTask`):**
-   * API requests and spatial processing run asynchronously in a dedicated worker thread via `QgsTask`.
-   * The QGIS user interface **never freezes** – users can pan, zoom, inspect, and select map features uninterrupted while calculations process in the background.
-
-2. **National and Public Registry Integrations (`backend/app/ingestion/`):**
-   * **ULDK GUGiK (`uldk_connector.py`):** Real-time cadastre parcel geometry retrieval in EPSG:2180 by TERYT cadastral identifier or clicked XY map coordinates.
-   * **IMGW-PIB (`imgw_connector.py`):** Live telemetry and synoptic weather observation data across Poland.
-   * **Open Geospatial Registry:** Catalog of 40+ official geospatial data services (WMS, WFS, WCS, STAC API) documented in [`docs/polish_public_gis_registries.md`](docs/polish_public_gis_registries.md).
-
-3. **Coordinate Reference System Transforms (`shared/constants/poland_crs.py`):**
-   * Pre-configured definitions and bounding boxes for the metric **EPSG:2180 (Poland CS92)**, global **EPSG:4326 (WGS 84)**, and web standard **EPSG:3857 (Web Mercator)**.
-
-4. **Shared Pydantic Schemas (`shared/schemas/geo_models.py`):**
-   * `GeoFeatureRequest`, `SpatialMetric`, and `GeoAnalysisResponse` serve as a single source of truth for API contracts, QGIS plugin data structures, and web clients.
+- **Non-blocking PyQGIS processing (`QgsTask`):** Heavy spatial computation and network requests run in a background worker thread. The QGIS canvas remains fully responsive (pan, zoom, select) while tasks execute.
+- **National registry connectors (`backend/app/ingestion/`):**
+  - **GUGiK ULDK (`uldk_connector.py`):** Real-time cadastral parcel boundary lookup by TERYT ID or clicked map coordinates (EPSG:2180).
+  - **IMGW-PIB (`imgw_connector.py`):** Live telemetry, synoptic weather observations, and hydrological data across Poland.
+  - **Public registry catalog:** 40+ curated services (WMS, WFS, STAC, CSW) documented in [`docs/polish_public_gis_registries.md`](docs/polish_public_gis_registries.md).
+- **Coordinate reference system utilities (`shared/constants/poland_crs.py`):** Verified transforms and bounds for EPSG:2180 (PUWG 1992), EPSG:4326 (WGS 84), and EPSG:3857 (Web Mercator).
+- **Shared data contracts (`shared/schemas/geo_models.py`):** Unified Pydantic models (`GeoFeatureRequest`, `SpatialMetric`, `GeoAnalysisResponse`) shared between the backend, QGIS plugin, and frontend.
+- **Peer-to-peer team sharing via Tailscale:** Work directly with teammates over a shared Tailscale mesh network without requiring commits or cloud deploys.
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
-### 0. Prerequisites & Recommended Environment
-* **QGIS:** Recommended official **QGIS 3.44.15 LTR** (Long Term Release) from [qgis.org](https://qgis.org/).
-* **Python:** Python 3.10, 3.11, 3.12 or 3.13.
-* **OS:** Windows, macOS, or Linux.
+### Prerequisites
+- **QGIS:** QGIS 3.44.15 LTR (or any 3.28+ LTR) with Python 3.10+
+- **Python:** Python 3.10, 3.11, 3.12, or 3.13
+- **OS:** Windows, macOS, or Linux
 
-### 1. QGIS Plugin & Sample Project
-The plugin can be linked directly into your active QGIS user profile:
-1. **Link the plugin (1-click):** Run `link_plugin.bat` (Windows) or `./link_plugin.sh` (macOS/Linux).
-2. **Open sample data in QGIS:**
-   * Open the project file **[`sample_project/sample_project.qgs`](sample_project/sample_project.qgs)** or simply drag & drop **[`sample_project/sample_polygons.geojson`](sample_project/sample_polygons.geojson)** into the QGIS map window.
-   * Right-click the `sample_polygons` layer $\rightarrow$ **Zoom to Layer** to center on the sample test polygons.
-3. **Enable plugin:** Go to **Plugins $\rightarrow$ Manage and Install Plugins...** $\rightarrow$ **Installed** tab and enable:  
-   ☑️ **`PyQGIS FastAPI Bridge`**.
-4. Click the bridge icon on the toolbar to open the dock widget panel.
-5. Click **`▶ Run Analysis (FastAPI)`** – processing tasks dispatch to the QGIS task manager (`QgsTask`), with results streaming into the dock log without UI interruption.
-
-### 2. FastAPI Backend
-Start the analytical server with a single command:
+### 1. Start the Backend
 ```bash
 python backend/run_backend.py
 ```
-* **API Base URL:** `http://127.0.0.1:8000`
-* **Interactive Swagger UI:** `http://127.0.0.1:8000/docs`
-* **Health Check Endpoint:** `http://127.0.0.1:8000/health`
+- API root: `http://127.0.0.1:8000`
+- Swagger UI: `http://127.0.0.1:8000/docs`
+- Health check: `http://127.0.0.1:8000/health`
 
-### 3. Automated Testing
-Run the comprehensive test suite (16 tests covering API endpoints, Pydantic schemas, CRS constants, ULDK/IMGW connectors, and QGIS plugin structure):
-* **Windows (one-click):** Double-click `run_tests.bat`
-* **Linux / macOS:** `./run_tests.sh`
-* **Direct command:** `python -m unittest discover -s tests -p "test_*.py" -v`
-* **GitHub Actions:** Automated CI runs on every push and pull request (`.github/workflows/test.yml`).
+### 2. Open the Web Viewer
+The web viewer is served directly by FastAPI:
+- Open in browser: `http://127.0.0.1:8000`
+- Source file: [`web/index.html`](web/index.html)
 
-### 4. Interactive Web Viewer
-The frontend map viewer is served directly by the FastAPI backend (no extra node/frontend setup required):
-* Open in browser: 👉 **[http://127.0.0.1:8000](http://127.0.0.1:8000)** (or over Tailscale: `http://<tailscale-ip>:8000`)
-* Standalone template file: [`web/index.html`](web/index.html)
+### 3. Load the QGIS Plugin
+1. Link the plugin into your QGIS profile:
+   - Windows: run `link_plugin.bat`
+   - Linux / macOS: run `./link_plugin.sh`
+2. Open sample data:
+   - Open [`sample_project/sample_project.qgs`](sample_project/sample_project.qgs) or drag & drop [`sample_project/sample_polygons.geojson`](sample_project/sample_polygons.geojson) into QGIS.
+3. Enable the plugin:
+   - Go to **Plugins -> Manage and Install Plugins... -> Installed** and check **PyQGIS FastAPI Bridge**.
+4. Click the bridge icon on the toolbar to show the dock panel.
+5. Click **Run Analysis (FastAPI)** to dispatch tasks via `QgsTask` without freezing the interface.
 
-### 5. Tailscale Team Collaboration (Live P2P without GitHub Sync)
-Team members on the same **Tailscale** mesh network (tailnet) can interact with services running on each other's workstations directly without needing continuous Git commits or GitHub pulls:
-1. **Host Backend:** Start `python backend/run_backend.py` (binds to `0.0.0.0:8000` across all interfaces).
-2. **Obtain Node Address:** Retrieve the host machine's Tailscale IP (`100.x.y.z`) or MagicDNS name (e.g., `gis-station`).
-3. **Connect from QGIS:** Teammates enter `http://<tailscale-ip>:8000` directly into the **API Server URL** field of the QGIS dock panel.
-4. **Connect from Web:** Open [`web/index.html`](web/index.html) and type the Tailscale host URL into the backend input field.
-5. **Environment Variable:** Set `PYQGIS_BRIDGE_API_URL=http://<tailscale-ip>:8000/api/v1` (or use `.env.example`) to preconfigure teammate clients.
+### 4. Run Automated Tests
+```bash
+# Windows
+run_tests.bat
+
+# Linux / macOS
+./run_tests.sh
+
+# Or directly with unittest
+python -m unittest discover -s tests -p "test_*.py" -v
+```
+All 16 unit tests cover API routes, schemas, CRS helpers, GUGiK/IMGW connectors, and plugin structure.
 
 ---
 
-## 🎨 UI Customization in Qt Designer
-1. Run **`open_designer.bat`** (or launch Qt Designer with QGIS custom widgets loaded).
-2. UI definition file: `qgis_plugin/pyqgis_fastapi_bridge/gui/dockwidget.ui`.
-3. Through dynamic UI loading (`PyQt5.uic.loadUiType`), interface adjustments apply immediately upon reloading the plugin in QGIS.
+## Tailscale Workflow (Team Collaboration)
+
+To share analysis models or run services across team members on a local network:
+1. Start the backend: `python backend/run_backend.py` (binds to `0.0.0.0:8000`).
+2. Obtain your Tailscale IP (e.g. `100.x.y.z`) or MagicDNS name.
+3. Teammates enter `http://<tailscale-ip>:8000` in their QGIS plugin dock panel or open `http://<tailscale-ip>:8000` in a browser.
+4. Alternatively, configure `PYQGIS_BRIDGE_API_URL` in `.env`.
 
 ---
 
-## 📜 License & Open Data
+## Customizing the UI in Qt Designer
 
-### 1. Open Source License
-Distributed under the **MIT License** (see [`LICENSE`](LICENSE)). Code may be freely adapted, integrated, and deployed for commercial and research applications.
+1. Launch Qt Designer via `open_designer.bat` (uses QGIS-bundled Qt Designer with QGIS custom widgets).
+2. Edit `qgis_plugin/pyqgis_fastapi_bridge/gui/dockwidget.ui`.
+3. Changes reload dynamically without needing to recompile `.ui` files.
 
-### 2. Official Open Spatial Data Sources
-The boilerplate integrates with legal, public, and open spatial data registries:
-* **GUGiK ULDK / PRG / NMT / BDOT10k:** Cadastral parcel locator, national administrative boundaries, digital elevation models (LiDAR), and topographic databases.
-* **IMGW-PIB:** Public synoptic observations, precipitation, and hydrological telemetry.
-* **Copernicus Data Space Ecosystem (ESA/EU):** Open Sentinel-1, Sentinel-2 multispectral and radar imagery.
-* Complete catalog with official WMS/WFS/REST endpoints is listed in [`docs/polish_public_gis_registries.md`](docs/polish_public_gis_registries.md).
+---
+
+## Project Structure
+
+```text
+pyqgis-fastapi-bridge/
+├── backend/                  # FastAPI analytical engine
+│   ├── app/
+│   │   ├── api/v1/           # Endpoints (analysis, cadastre)
+│   │   ├── core/             # Configuration and settings
+│   │   └── ingestion/        # GUGiK ULDK & IMGW-PIB connectors
+│   └── run_backend.py        # Backend runner script
+├── qgis_plugin/              # PyQGIS desktop plugin
+│   └── pyqgis_fastapi_bridge/
+│       ├── core/             # Background QgsTask workers and API client
+│       ├── gui/              # Qt dockwidget and .ui layout
+│       └── metadata.txt      # QGIS plugin metadata
+├── shared/                   # Shared modules (backend + plugin)
+│   ├── constants/            # EPSG:2180, EPSG:4326 definitions
+│   └── schemas/              # Pydantic data contracts
+├── web/                      # MapLibre GL JS web client (served by FastAPI)
+│   └── index.html
+├── sample_project/           # Sample QGIS project and test GeoJSON
+├── docs/                     # Documentation and screenshot assets
+│   ├── images/               # Visual verification screenshots
+│   └── polish_public_gis_registries.md
+├── tests/                    # 16 automated unit tests
+├── link_plugin.bat           # Symlink plugin to QGIS profile (Windows)
+├── link_plugin.sh            # Symlink plugin to QGIS profile (POSIX)
+├── run_tests.bat             # Test runner (Windows)
+├── run_tests.sh              # Test runner (POSIX)
+├── start_all.bat             # One-click startup script (Windows)
+└── requirements.txt          # Python dependencies
+```
+
+---
+
+## License & Data Attribution
+
+- **Code:** [MIT License](LICENSE)
+- **Public Data Sources:**
+  - **GUGiK:** Open cadastral parcel geometry (ULDK), PRG, BDOT10k, NMT (LiDAR).
+  - **IMGW-PIB:** Public meteorological and hydrological data.
+  - **OpenStreetMap:** Base map tiles © [OpenStreetMap contributors](https://www.openstreetmap.org/copyright).
